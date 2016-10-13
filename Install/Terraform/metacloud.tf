@@ -141,7 +141,8 @@ resource "null_resource" "overlay" {
     inline = [
       "sudo cat /etc/hosts hostfile >> /tmp/hosts",
       "sudo mv /tmp/hosts /etc/hosts",
-      "sudo kubectl create -f http://docs.projectcalico.org/v1.5/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml",
+      "kubectl apply -f https://git.io/weave-kube",
+      #"sudo kubectl create -f http://docs.projectcalico.org/v1.5/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml",
       "sudo kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml"
     ]
   } 
