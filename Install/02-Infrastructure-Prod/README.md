@@ -170,3 +170,4 @@ openssl x509 -in kubernetes.pem -text -noout
 Now we have to get these on all the hosts in our cluster. 
 
 
+
