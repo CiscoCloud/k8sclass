@@ -12,7 +12,7 @@ variable key_pair { default = "t5" }
 variable private_key_file { default = "~/.ssh/t5.pem"}
 variable security_group { default = "default" }
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" }
-variable token { default = "f00bar.f00barf00bar1234" }
+variable kube_token { default = "f00bar.f00barf00bar1234" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
 provider "openstack" {
@@ -103,6 +103,7 @@ data "template_file" "etcd" {
   }
 }
 
+
 # get hosts file to the nodes. 
 resource "null_resource" "hosts" {
   count = "${var.master_count + var.worker_count}"
@@ -183,6 +184,231 @@ resource "null_resource" "etcd" {
   }
 }
 
-output "rendered" {
-  value = "${element(data.template_file.etcd.*.rendered, count)}"
+# template file for kubernetes-api server
+data "template_file" "kube-apiserver" {
+  count = "${var.master_count}"
+  template = "${file("templates/kube-apiserver.service.tpl")}"
+  vars {
+    count = "${var.master_count}"
+    hostname = "${element(openstack_compute_instance_v2.kube-master.*.name, count.index)}"
+    hostip = "${element(openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4, count.index)}" 
+    cluster = "${join("," , formatlist("https://%s:2379", openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4))}"
+    service_cluster_ip_range = "10.32.0.0/24"
+    service_port_range = "30000-32767"
+  }
 }
+
+# template file for kubernetes conteroller manager
+data "template_file" "kube-controller-manager" {
+  count = "${var.master_count}"
+  template = "${file("templates/kube-controller-manager.service.tpl")}"
+  vars {
+    hostip = "${element(openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4, count.index)}" 
+    cluster_cidr = "10.200.0.0/16"
+    service_cluster_ip_range = "10.32.0.0/24"  # has to match the cluster ip range in above definition
+    cluster_name = "mykubernetes"
+  }
+}
+
+data "template_file" "kube-scheduler" {
+  count = "${var.master_count}"
+  template = "${file("templates/kube-scheduler.service.tpl")}"
+  vars {
+    hostip = "${element(openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4, count.index)}" 
+  }
+}
+
+data "template_file" "kube-tokens" {
+  count = "${var.master_count}"
+  template = "${file("templates/token.csv.tpl")}"
+  vars {
+    token = "${var.kube_token}"
+  }
+}
+
+resource "null_resource" "kube-master" {
+  depends_on = ["null_resource.etcd"]
+
+  count = "${var.master_count}"
+  connection {
+    type = "ssh"
+    user = "${var.ssh_user}"
+    private_key = "${file(var.private_key_file)}"
+    host = "${element(openstack_compute_instance_v2.kube-master.*.access_ip_v4, count.index)}"
+    bastion_host = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
+    bastion_key = "${file(var.private_key_file)}"
+  }  
+
+  provisioner "file" {
+    content = "${element(data.template_file.kube-apiserver.*.rendered, count.index)}"
+    destination = "kube-apiserver.service"
+  }
+
+  provisioner "file" {
+    content = "${element(data.template_file.kube-controller-manager.*.rendered, count.index)}"
+    destination = "kube-controller-manager.service"
+  }
+
+  provisioner "file" {
+    content = "${element(data.template_file.kube-scheduler.*.rendered, count.index)}"
+    destination = "kube-scheduler.service"
+  }
+
+  provisioner "file" {
+    content = "${element(data.template_file.kube-tokens.*.rendered, count.index)}"
+    destination = "token.csv"
+  }
+
+  provisioner "file" {
+    source = "templates/authorization-policy.jsonl"
+    destination = "authorization-policy.jsonl"
+  }
+  
+
+  # get the kubernetes binaries
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /var/lib/kubernetes",
+      "sudo cp ca.pem kubernetes-key.pem kubernetes.pem /var/lib/kubernetes/",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-apiserver",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-controller-manager",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-scheduler",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubectl",
+      "chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl",
+      "sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/bin/" 
+    ]
+  }  
+
+  # copy the config files to the right place. 
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv token.csv /var/lib/kubernetes/",
+      "sudo mv authorization-policy.jsonl /var/lib/kubernetes/",
+      "sudo mv kube-apiserver.service /etc/systemd/system/",
+      "sudo mv kube-controller-manager.service /etc/systemd/system/",
+      "sudo mv kube-scheduler.service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable kube-apiserver",
+      "sudo systemctl enable kube-controller-manager",
+      "sudo systemctl enable kube-scheduler",
+      "sudo systemctl restart kube-apiserver",
+      "sudo systemctl restart kube-controller-manager",
+      "sudo systemctl restart kube-scheduler"
+    ]
+  }  
+}
+
+data "template_file" "kubelet" {
+  count = "${var.worker_count}"
+  template = "${file("templates/kubelet.service.tpl")}"
+  vars {
+    api_servers = "${join("," , formatlist("https://%s:6443", openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4))}"
+    cluster_dns = "10.32.0.10"
+    cluster_domain = "cluster.local"
+  }
+}
+
+data "template_file" "kubeconfig" {
+  count = "${var.worker_count}"
+  template = "${file("templates/kubeconfig.tpl")}"
+  vars {
+    master = "${format("https://%s:6443", openstack_compute_instance_v2.kube-master.0.access_ip_v4)}"
+    token = "${var.kube_token}"
+  }
+}
+
+
+
+data "template_file" "kube-proxy" {
+  count = "${var.worker_count}"
+  template = "${file("templates/kube-proxy.service.tpl")}"
+  vars {
+    # should make this the load balancer, but for now its the first kube master
+    master = "${format("https://%s:6443", openstack_compute_instance_v2.kube-master.0.access_ip_v4)}"
+  }
+}
+
+resource "null_resource" "kube-worker" {
+  depends_on = ["null_resource.kube-master"]
+
+  count = "${var.worker_count}"
+  connection {
+    type = "ssh"
+    user = "${var.ssh_user}"
+    private_key = "${file(var.private_key_file)}"
+    host = "${element(openstack_compute_instance_v2.kube-master.*.access_ip_v4, count.index)}"
+    bastion_host = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
+    bastion_key = "${file(var.private_key_file)}"
+  }
+  # copy key files
+  provisioner "file" {
+    source = "certs/ca.pem"
+    destination = "ca.pem"
+  }
+
+  provisioner "file" {
+    source = "certs/kubernetes-key.pem"
+    destination = "kubernetes-key.pem"
+  }
+
+  provisioner "file" {
+    source = "certs/kubernetes.pem"
+    destination = "kubernetes.pem"
+  }
+  
+  # get the Docker file
+  provisioner "file" {
+    source = "templates/docker.service"
+    destination = "docker.service"
+  }
+
+  # get the Kubelet file to the worker nodes
+  provisioner "file" {
+    content = "${element(data.template_file.kubelet.*.rendered, count.index)}"
+    destination = "kubelet.service"
+  }
+
+  # get the kubeconfig
+  provisioner "file" {
+    content = "${element(data.template_file.kubeconfig.*.rendered, count.index)}"
+    destination = "kubeconfig"
+  }
+
+  # get the kube proxy
+  provisioner "file" {
+    content = "${element(data.template_file.kube-proxy.*.rendered, count.index)}"
+    destination = "kube-proxy.service"
+  }
+
+
+  # install certs and docker. 
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /var/lib/kubernetes",
+      "sudo mkdir -p /var/lib/kubelet",
+      "sudo mkdir -p /opt/cni",
+      "sudo cp ca.pem kubernetes-key.pem kubernetes.pem /var/lib/kubernetes/",
+      "wget --quiet https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubectl",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-proxy",
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubelet", 
+      "wget --quiet https://storage.googleapis.com/kubernetes-release/network-plugins/cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz",
+      "chmod +x kubectl kube-proxy kubelet",
+      "sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni", 
+      "tar -xvf docker-1.12.1.tgz",
+      "sudo cp docker/docker* /usr/bin/",
+      "sudo mv kubeconfig /var/lib/kubelet/",
+      "sudo mv kubectl kube-proxy kubelet /usr/bin",
+      "sudo mv docker.service /etc/systemd/system/",
+      "sudo mv kubelet.service /etc/systemd/system/",
+      "sudo mv kubea-api.service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable docker",
+      "sudo systemctl enable kubelet",
+      "sudo systemctl enable kube-proxy",
+      "sudo systemctl restart docker",
+      "sudo systemctl restart kubelet",
+      "sudo systemctl restart kube-proxy"
+    ]
+  }
+}  
