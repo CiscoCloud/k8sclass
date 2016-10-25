@@ -14,6 +14,7 @@ variable security_group { default = "default" }
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" }
 variable kube_token { default = "f00bar.f00barf00bar1234" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
+variable cluster_name { default = "mykubernetes" } # name of your kubernetes cluster. 
 
 provider "openstack" {
 }
@@ -206,7 +207,7 @@ data "template_file" "kube-controller-manager" {
     hostip = "${element(openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4, count.index)}" 
     cluster_cidr = "10.200.0.0/16"
     service_cluster_ip_range = "10.32.0.0/24"  # has to match the cluster ip range in above definition
-    cluster_name = "mykubernetes"
+    cluster_name = "${var.cluster_name}"
   }
 }
 
@@ -328,7 +329,7 @@ data "template_file" "kube-proxy" {
   }
 }
 
-resource "null_resource" "kube-worker" {
+resource "null_resource" "kube-workers" {
   depends_on = ["null_resource.kube-master"]
 
   count = "${var.worker_count}"
@@ -336,7 +337,7 @@ resource "null_resource" "kube-worker" {
     type = "ssh"
     user = "${var.ssh_user}"
     private_key = "${file(var.private_key_file)}"
-    host = "${element(openstack_compute_instance_v2.kube-master.*.access_ip_v4, count.index)}"
+    host = "${element(openstack_compute_instance_v2.kube-worker.*.access_ip_v4, count.index)}"
     bastion_host = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
     bastion_key = "${file(var.private_key_file)}"
   }
@@ -401,7 +402,7 @@ resource "null_resource" "kube-worker" {
       "sudo mv kubectl kube-proxy kubelet /usr/bin",
       "sudo mv docker.service /etc/systemd/system/",
       "sudo mv kubelet.service /etc/systemd/system/",
-      "sudo mv kubea-api.service /etc/systemd/system/",
+      "sudo mv kube-proxy.service /etc/systemd/system/",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable docker",
       "sudo systemctl enable kubelet",
