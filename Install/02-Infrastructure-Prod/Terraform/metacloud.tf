@@ -318,14 +318,14 @@ data "template_file" "kubeconfig" {
   }
 }
 
-
-
 data "template_file" "kube-proxy" {
   count = "${var.worker_count}"
   template = "${file("templates/kube-proxy.service.tpl")}"
   vars {
     # should make this the load balancer, but for now its the first kube master
-    master = "${format("https://%s:6443", openstack_compute_instance_v2.kube-master.0.access_ip_v4)}"
+    # if going directly to server its https://%s:6443, but if we use 
+    # the load balancer instead its just https://%s
+    master = "${format("https://%s:6443", openstack_compute_instance_v2.lb.0.access_ip_v4)}"
   }
 }
 
