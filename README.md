@@ -27,12 +27,9 @@ Additionally, hands-on labs will provide real world experience with Kubernetes.
 * Launching and Managing Applications (kubectl commands)
 * [Running Lab](03-Running/README.md)
 * Integrating Kubernetes into CI/CD Pipeline (Drone, Jenkins)
+* [CI/CD Lab](04-CICD/README.md)
 * Monitoring Applications with Prometheus 
+* [Monitoring](05-Monitor/README.md)
 
-## Hands-on Labs
-
-
-* Running an application stack in Kubernetes (scaling, lifecycle)
-* CI/CD
 
 
