@@ -15,11 +15,11 @@
 # up in Openstack as the hostnames. 
 # This also includes the quantities.  3 controllers gives redundancy and is a safe pick. 
 # for the workers pick as many as you have room for.  
-variable lb_name { default = "knginx"}
+variable lb_name { default = "vnginx"}
 variable lb_count { default = "1" }
-variable master_name { default = "kcontroller"}
+variable master_name { default = "vcontroller"}
 variable master_count { default = "3" }
-variable worker_name { default = "kworker" }
+variable worker_name { default = "vworker" }
 variable worker_count { default = "3" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
@@ -37,6 +37,13 @@ variable private_key_file { default = "~/.ssh/t5.pem"} # the location of your pr
 variable security_group { default = "default" } # openstack security group to use. 
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" } # the pool of floating IP addresses. 
 
+# sample for Trial 14
+#variable network { default = "twenty" } # what openstack network do we use? 
+#variable kube_image { default = "Ubuntu16.04"} # what image do we use? 
+#variable ip_pool { default = "PUBLIC EXTERNAL - DO NOT MODIFY" } # the pool of floating IP addresses. 
+#variable key_pair { default = "k14" } # what is the keypair name to use?  This should already have been created. 
+#variable private_key_file { default = "~/.ssh/k14.pem"} # the location of your private key. 
+
 ## Kubernetes Variables
 
 # these variables are used to tweek your cluster. 
@@ -48,7 +55,7 @@ variable cluster_domain {default = "cluster.local" } # the internal Kube cluster
 # we use 10.200.0.0/16 then worker01 will get 10.200.0.0/24, worker02: 10.200.1.0/24, etc. 
 # then static host routes need to be configured for the nodes to forward traffic to the worker nodes
 # to resolve this IP range. 
-variable cluster_cidr {default = "10.200.0.0/16" }
+variable cluster_cidr {default = "10.201.0.0/16" }
 
 # The service cluster should not overlap with the cluster_cidr and is the network all services
 # will be constructed from.  
@@ -122,6 +129,16 @@ resource "openstack_compute_instance_v2" "kube-worker" {
   security_groups = ["${var.security_group}"]
 }
 
+
+data "template_file" "nginx" {
+  template = "${file("templates/nginx.conf.tpl")}"
+  vars {
+    server1 = "${openstack_compute_instance_v2.kube-master.0.access_ip_v4}"
+    server2 = "${openstack_compute_instance_v2.kube-master.1.access_ip_v4}"
+    server3 = "${openstack_compute_instance_v2.kube-master.2.access_ip_v4}"
+  }
+}
+
 # the template file we use to create the cert files used for security. 
 data "template_file" "kubernetes-csr" {
   template = "${file("templates/kubernetes-csr.json.tpl")}"
@@ -164,8 +181,8 @@ resource "null_resource" "certs12" {
 
 
 # copy the key to the master node. 
-resource "null_resource" "lb" {
-  depends_on = ["openstack_compute_instance_v2.lb"]
+resource "null_resource" "lb2" {
+  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx"]
 
   count = "${var.lb_count}"
   connection {
@@ -176,12 +193,21 @@ resource "null_resource" "lb" {
   }
 
   provisioner "file" {
+    content = "${data.template_file.nginx.rendered}"
+    destination = "nginx.conf"
+  }
+
+  provisioner "file" {
     source = "${var.private_key_file}"
     destination = "/home/ubuntu/t5.pem"
   }
 
   provisioner "remote-exec" {
     inline = [
+      "sudo apt-get update",
+      "sudo apt-get -y install nginx",
+      "sudo mv nginx.conf /etc/nginx/",
+      "sudo systemctl restart nginx",
       "chmod 0400 /home/ubuntu/t5.pem"
     ]
   }
@@ -205,7 +231,7 @@ resource "null_resource" "hosts" {
     type = "ssh"
     user = "${var.ssh_user}"
     private_key = "${file(var.private_key_file)}"
-    host = "${element(concat(openstack_compute_instance_v2.kube-master.*.access_ip_v4, openstack_compute_instance_v2.kube-worker.*.access_ip_v4), count.index)}"
+    host = "${element(concat(openstack_compute_instance_v2.kube-master.*.access_ip_v4, openstack_compute_instance_v2.kube-worker.*.access_ip_v4, openstack_compute_instance_v2.lb.*.access_ip_v4), count.index)}"
     bastion_host = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
     bastion_key = "${file(var.private_key_file)}"
   }  
@@ -226,7 +252,7 @@ resource "null_resource" "hosts" {
 
 # copy the keys to all the nodes in the cluster. 
 resource "null_resource" "etcd" {
-  depends_on = ["null_resource.lb"]
+  #depends_on = ["null_resource.lb"]
 
   count = "${var.master_count}"
   connection {
@@ -478,6 +504,7 @@ resource "null_resource" "kube-workers" {
   # install certs and docker. 
   provisioner "remote-exec" {
     inline = [
+      "sudo apt install bridge-utils",
       "sudo mkdir -p /var/lib/kubernetes",
       "sudo mkdir -p /var/lib/kubelet",
       "sudo mkdir -p /opt/cni",

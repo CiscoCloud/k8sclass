@@ -9,9 +9,9 @@ events {
 
 stream {
         upstream kubernetes {
-                server 10.106.1.2:6443;
-                server 10.106.1.3:6443;
-                server 10.106.1.5:6443;
+                server ${server1}:6443;
+                server ${server2}:6443;
+                server ${server3}:6443;
         }
 
         server {
