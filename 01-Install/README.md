@@ -119,3 +119,11 @@ Leave this as existing setup.
 #### cluster_dns
 Leave this as defined. 
 
+## Apply and Build
+
+We will now build the cluster by running: 
+
+```
+terraform apply
+```
+If this fails then check what variables might need to be changed, or rerun the configuration again.  It should finish cleanly.  If not, please see your instructor for help. 

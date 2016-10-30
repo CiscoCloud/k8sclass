@@ -21,15 +21,17 @@ Additionally, hands-on labs will provide real world experience with Kubernetes.
 * Metacloud Introduction
 * Operating Systems Strategies (CoreOS, Ubuntu, CentOS/RedHat)
 * Kubernetes Installation Strategies (kubeadm, Packer, Terraform, Heat, Ansible)
+* [Installation Lab](01-Install/README.md)
 * Kubernetes Networking (Flannel, Calico, Cannel, Weave)
+* [Configuration Lab](02-Config/README.md)
 * Launching and Managing Applications (kubectl commands)
+* [Running Lab](03-Running/README.md)
 * Integrating Kubernetes into CI/CD Pipeline (Drone, Jenkins)
 * Monitoring Applications with Prometheus 
 
 ## Hands-on Labs
 
-* Install Kubernetes - Heat template, Ansible, Terraform, Packer
-* Networking options
+
 * Running an application stack in Kubernetes (scaling, lifecycle)
 * CI/CD
 
