@@ -83,7 +83,18 @@ This gives us output like:
 10.200.1.0/24,10.106.1.28
 10.200.0.0/24,10.106.1.30
 ```
-Which is exactly what we can put into our subnets.  
+Which is exactly what we can put into our subnets.
+
+We will use neutron as the overlay network instead of something like weave or flannel.  This is done on an admin account with a command like: 
+
+```
+neutron port-update 1b6b5e18-bd6c-4924-804f-bfa61432d4b4 \
+--allowed-address-pairs type=dict list=true \
+ip_address=10.200.2.0/24 \
+ip_address=192.168.0.0/16 \
+ip_address=172.31.232.0/21
+```
+Here this is the UUID of the port and then we are saying which subnets we allow through the port. 
 
 __IMPORTANT:__ At this point give the instructor the output of this last command.  When the instructor gives you the green light, reboot your nodes for these routes to take effect. 
  

@@ -4,6 +4,7 @@
     \"127.0.0.1\",
     \"${cluster_ip}\",
     \"${public_ip}\",
+    \"${lb_ip}\",
     ${worker_nodes},
     ${master_nodes}
   ],

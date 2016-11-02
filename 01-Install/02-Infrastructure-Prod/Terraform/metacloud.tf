@@ -144,6 +144,7 @@ data "template_file" "kubernetes-csr" {
   template = "${file("templates/kubernetes-csr.json.tpl")}"
   vars {
     cluster_ip = "${var.service_cluster_ip}"
+    lb_ip = "${openstack_compute_instance_v2.lb.0.network.0.fixed_ip_v4}"
     public_ip = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
     master_nodes = "${join(",\n" , formatlist("|%s|,\n|%s|", openstack_compute_instance_v2.kube-master.*.name, openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4))}"
     worker_nodes = "${join(",\n" , formatlist("|%s|,\n|%s|", openstack_compute_instance_v2.kube-worker.*.name, openstack_compute_instance_v2.kube-worker.*.network.0.fixed_ip_v4))}"
@@ -158,7 +159,7 @@ output "certs" {
 # generate the certificates
 # we assume you have cfssljson and cfssl installed.  Otherwise this will fail. 
 # see: https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/02-certificate-authority.md
-resource "null_resource" "certs12" {
+resource "null_resource" "certs" {
   depends_on = ["openstack_compute_instance_v2.lb","openstack_compute_instance_v2.kube-worker","openstack_compute_instance_v2.kube-master"]
   triggers {
     template = "${data.template_file.kubernetes-csr.rendered}"
@@ -179,10 +180,17 @@ resource "null_resource" "certs12" {
   }
 }
 
+resource "null_resource" "hosts" {
+  # create hostfile for everyone. 
+  provisioner "local-exec" {
+    command = "./terraform.py --hostfile | sed 's/^## begin.*/127.0.0.1 localhost/' >hostfile"
+  }
+}
+
 
 # copy the key to the master node. 
 resource "null_resource" "lb2" {
-  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx"]
+  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.hosts"]
 
   count = "${var.lb_count}"
   connection {
@@ -198,6 +206,11 @@ resource "null_resource" "lb2" {
   }
 
   provisioner "file" {
+    source = "hostfile"
+    destination = "/home/ubuntu/"
+  }
+
+  provisioner "file" {
     source = "${var.private_key_file}"
     destination = "/home/ubuntu/t5.pem"
   }
@@ -208,6 +221,7 @@ resource "null_resource" "lb2" {
       "sudo apt-get -y install nginx",
       "sudo mv nginx.conf /etc/nginx/",
       "sudo systemctl restart nginx",
+      "sudo mv hostfile /etc/hosts",
       "chmod 0400 /home/ubuntu/t5.pem"
     ]
   }
@@ -235,9 +249,6 @@ resource "null_resource" "hosts" {
     bastion_host = "${openstack_compute_instance_v2.lb.0.network.0.floating_ip}"
     bastion_key = "${file(var.private_key_file)}"
   }  
-  provisioner "local-exec" {
-    command = "./terraform.py --hostfile | sed 's/^## begin.*/127.0.0.1 localhost/' >hostfile"
-  }
   provisioner "file" {
     source = "hostfile"
     destination = "hostfile"
@@ -252,7 +263,7 @@ resource "null_resource" "hosts" {
 
 # copy the keys to all the nodes in the cluster. 
 resource "null_resource" "etcd" {
-  #depends_on = ["null_resource.lb"]
+  #depends_on = ["null_resource.lb", "null_resource.certs"]
 
   count = "${var.master_count}"
   connection {
@@ -324,7 +335,7 @@ data "template_file" "kube-controller-manager" {
   template = "${file("templates/kube-controller-manager.service.tpl")}"
   vars {
     hostip = "${element(openstack_compute_instance_v2.kube-master.*.network.0.fixed_ip_v4, count.index)}" 
-    cluster_cidr = "10.200.0.0/16"
+    cluster_cidr = "${var.cluster_cidr}"
     service_cluster_ip_range = "${var.service_cluster_net}" # has to match the cluster ip range in kube-apiserver
     cluster_name = "${var.cluster_name}"
   }
@@ -432,7 +443,8 @@ data "template_file" "kubeconfig" {
   count = "${var.worker_count}"
   template = "${file("templates/kubeconfig.tpl")}"
   vars {
-    master = "${format("https://%s:6443", openstack_compute_instance_v2.kube-master.0.access_ip_v4)}"
+    #master = "${format("https://%s:6443", openstack_compute_instance_v2.kube-master.0.access_ip_v4)}"
+    master = "${format("https://%s", openstack_compute_instance_v2.lb.0.access_ip_v4)}"
     token = "${var.kube_token}"
   }
 }
@@ -441,15 +453,15 @@ data "template_file" "kube-proxy" {
   count = "${var.worker_count}"
   template = "${file("templates/kube-proxy.service.tpl")}"
   vars {
-    # should make this the load balancer, but for now its the first kube master
     # if going directly to server its https://%s:6443, but if we use 
-    # the load balancer instead its just https://%s
-    master = "${format("https://%s:6443", openstack_compute_instance_v2.lb.0.access_ip_v4)}"
+    # the load balancer instead its just https://%s.  We're using the load balancer
+    master = "${format("https://%s", openstack_compute_instance_v2.lb.0.access_ip_v4)}"
+    cluster_cidr =  "${var.cluster_cidr}"
   }
 }
 
 resource "null_resource" "kube-workers" {
-  depends_on = ["null_resource.kube-master"]
+  depends_on = ["null_resource.kube-master", "null_resource.certs"]
 
   count = "${var.worker_count}"
   connection {

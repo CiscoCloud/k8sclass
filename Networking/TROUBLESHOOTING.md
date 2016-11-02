@@ -262,8 +262,7 @@ systemctl stop kubelet kube-proxy docker
 ip link set dev docker0 down
 brctl delbr docker0
 brctl addbr cbr0 
-ip address add 10.200.0.1/24 dev cbr0
-ip addr add 10.200.2.0/24 dev cbr0 
+ip address add 10.201.0.1/24 dev cbr0
 ip link set dev cbr0 up
 iptables -t nat -F POSTROUTING # not sure what this did...
 ```
