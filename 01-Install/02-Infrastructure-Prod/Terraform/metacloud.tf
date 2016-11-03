@@ -55,7 +55,20 @@ variable cluster_domain {default = "cluster.local" } # the internal Kube cluster
 # we use 10.200.0.0/16 then worker01 will get 10.200.0.0/24, worker02: 10.200.1.0/24, etc. 
 # then static host routes need to be configured for the nodes to forward traffic to the worker nodes
 # to resolve this IP range. 
+
+# first what is the default overarching subnet?  
 variable cluster_cidr {default = "10.201.0.0/16" }
+
+# second: make sure the cluster_nets are within the cluster_cidr. 
+# also: make sure there are as many cluster nets as there are nodes.
+variable cluster_nets {
+  type = "list"
+  default = [
+    "10.201.0.0/24",
+    "10.201.1.0/24",
+    "10.201.2.0/24",
+  ]
+}
 
 # The service cluster should not overlap with the cluster_cidr and is the network all services
 # will be constructed from.  
@@ -180,7 +193,9 @@ resource "null_resource" "certs" {
   }
 }
 
-resource "null_resource" "hosts" {
+# generate a hostfile for the machines. 
+resource "null_resource" "lbhosts" {
+  depends_on = ["openstack_compute_instance_v2.lb", "openstack_compute_instance_v2.kube-worker", "openstack_compute_instance_v2.kube-master"]
   # create hostfile for everyone. 
   provisioner "local-exec" {
     command = "./terraform.py --hostfile | sed 's/^## begin.*/127.0.0.1 localhost/' >hostfile"
@@ -190,7 +205,7 @@ resource "null_resource" "hosts" {
 
 # copy the key to the master node. 
 resource "null_resource" "lb2" {
-  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.hosts"]
+  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.lbhosts"]
 
   count = "${var.lb_count}"
   connection {
@@ -207,7 +222,7 @@ resource "null_resource" "lb2" {
 
   provisioner "file" {
     source = "hostfile"
-    destination = "/home/ubuntu/"
+    destination = "/home/ubuntu/hosts"
   }
 
   provisioner "file" {
@@ -460,6 +475,15 @@ data "template_file" "kube-proxy" {
   }
 }
 
+# configure cbr0 individually on each host. 
+data "template_file" "cbr0" {
+  count = "${var.worker_count}"
+  template = "${file("templates/cbr0.cfg.tpl")}"
+  vars {
+    docker_bridge = "${element(var.cluster_nets, count.index)}"
+  }
+}
+
 resource "null_resource" "kube-workers" {
   depends_on = ["null_resource.kube-master", "null_resource.certs"]
 
@@ -500,6 +524,12 @@ resource "null_resource" "kube-workers" {
     destination = "kubelet.service"
   }
 
+  # get the cbr0 interface file installed.
+  provisioner "file" {
+    content = "${element(data.template_file.cbr0.*.rendered, count.index)}"
+    destination = "cbr0.cfg"
+  }
+
   # get the kubeconfig
   provisioner "file" {
     content = "${element(data.template_file.kubeconfig.*.rendered, count.index)}"
@@ -530,11 +560,13 @@ resource "null_resource" "kube-workers" {
       "sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni", 
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
+      "sudo mv cbr0.cfg /etc/network/interfaces.d/",
       "sudo mv kubeconfig /var/lib/kubelet/",
       "sudo mv kubectl kube-proxy kubelet /usr/bin",
       "sudo mv docker.service /etc/systemd/system/",
       "sudo mv kubelet.service /etc/systemd/system/",
       "sudo mv kube-proxy.service /etc/systemd/system/",
+      "sudo ifup cbr0",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable docker",
       "sudo systemctl enable kubelet",

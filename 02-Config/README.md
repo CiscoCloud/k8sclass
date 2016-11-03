@@ -67,7 +67,7 @@ kworker03   Ready     1h
 
 ## Configure overlay networking
 
-In most of the kubernetes guides you'll find recommendations to use weave, flannel, calico, or some other networking overlay.  With OpenStack, we already have a network overlay, so we'll use it!
+In most of the kubernetes guides you'll find recommendations to use weave, flannel, calico, or some other networking overlay.  With OpenStack, we already have a network overlay called neutron, so we'll use it!
 
 (Note: For more information on this section see [this excellent blog post](http://blogs.cisco.com/cloud/deploy-a-kubernetes-cluster-on-openstack-using-ansible))
 
@@ -85,6 +85,18 @@ This gives us output like:
 ```
 Which is exactly what we can put into our subnets.
 
+__IMPORTANT__ you will need openstackclient 3.3 for this command to work: 
+
+```
+pip install --upgrade python-openstackclient
+```
+Next we find all the ports in our network: 
+
+```
+openstack port list --network pipeline
+```
+
+
 We will use neutron as the overlay network instead of something like weave or flannel.  This is done on an admin account with a command like: 
 
 ```
@@ -95,6 +107,43 @@ ip_address=192.168.0.0/16 \
 ip_address=172.31.232.0/21
 ```
 Here this is the UUID of the port and then we are saying which subnets we allow through the port. 
+
+```
+neutron port-update ce036350-e199-423a-a1cf-480f009f9f91 \
+--allowed-address-pairs type=dict list=true ip_address=10.201.1.0/24
+```
+```
+neutron port-update adbce357-da18-4b2c-aef7-3c17c67bbc43 \
+--allowed-address-pairs type=dict list=true ip_address=10.201.2.0/24
+```
+Check that its working with: 
+
+```
+neutron port-show c49e2845-d20b-41da-b18a-30c4ada8e97a
++-----------------------+-------------------------------------------------------------------------------------+
+| Field                 | Value                                                                               |
++-----------------------+-------------------------------------------------------------------------------------+
+| admin_state_up        | True                                                                                |
+| allowed_address_pairs | {"ip_address": "10.201.0.0/24", "mac_address": "fa:16:3e:16:d0:44"}                 |
+| binding:host_id       | mhv6.trial5.mc.metacloud.in                                                         |
+| binding:profile       | {}                                                                                  |
+| binding:vif_details   | {"port_filter": true}                                                               |
+| binding:vif_type      | bridge                                                                              |
+| binding:vnic_type     | normal                                                                              |
+| device_id             | 49cc915e-e04f-47da-a234-9d29cbb5cce5                                                |
+| device_owner          | compute:None                                                                        |
+| extra_dhcp_opts       |                                                                                     |
+| fixed_ips             | {"subnet_id": "e9e30169-44b0-4b17-8aaa-77852190875e", "ip_address": "10.106.1.144"} |
+| id                    | c49e2845-d20b-41da-b18a-30c4ada8e97a                                                |
+| mac_address           | fa:16:3e:16:d0:44                                                                   |
+| name                  |                                                                                     |
+| network_id            | b0c2ce4c-d706-4094-b7fb-243ddeada563                                                |
+| security_groups       | 289dd19a-194d-4026-915b-d75ec4d890c1                                                |
+| status                | ACTIVE                                                                              |
+| tenant_id             | 0b42f5efc6de46cb8a3119e5f667b868                                                    |
++-----------------------+-------------------------------------------------------------------------------------+
+```
+Notice that we see the port 
 
 __IMPORTANT:__ At this point give the instructor the output of this last command.  When the instructor gives you the green light, reboot your nodes for these routes to take effect. 
  
