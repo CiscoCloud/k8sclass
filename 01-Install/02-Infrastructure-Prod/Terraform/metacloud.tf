@@ -62,7 +62,7 @@ variable cluster_cidr {default = "10.201.0.0/16" }
 # second: we will make individual ranges for each node.  What will it start with? 
 # right now only /24 is supported.  This prefix should match the cluster_cidr defined above. 
 variable cluster_nets_prefix {default = "10.201" }
-variable cluster_nets_suffix {default = "0/24" }
+variable cluster_nets_suffix {default = "0\\/24" }
 
 # the interface device is the device your VM was/will be configured with by openstack.  Was it ens3? eth0? 
 # change it here.  This is used for static routes that will be placed in the nodes interface configuration
@@ -480,7 +480,7 @@ data "template_file" "cbr0" {
   template = "${file("templates/cbr0.cfg.tpl")}"
   vars {
     # this will create something like 201.25.(count).0/24
-    docker_bridge = "${format("%s.%d.0/24", var.cluster_nets_prefix, count.index )}"
+    docker_bridge = "${format("%s.%s.0/24", var.cluster_nets_prefix, element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index))}"
     # this will create a list of:  up route add -net 201.25.0.0/24 gw 10.106.0.144 dev ens3
     static_routes = "${join("\n", formatlist("up route add -net %s.%s.0/24 gw %s dev %s", 
                       var.cluster_nets_prefix, 
@@ -567,7 +567,7 @@ resource "null_resource" "kube-workers" {
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
       # have to remove the local bridge entry for this host from cbr0
-      "sed -e 's/^up.* ${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg1",
+      "sed -e 's/^up.*${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg1",
       "sudo mv cbr0.cfg1 /etc/network/interfaces.d/cbr0.cfg",
       "sudo mv kubeconfig /var/lib/kubelet/",
       "sudo mv kubectl kube-proxy kubelet /usr/bin",
