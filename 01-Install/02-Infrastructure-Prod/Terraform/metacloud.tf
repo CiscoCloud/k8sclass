@@ -59,16 +59,15 @@ variable cluster_domain {default = "cluster.local" } # the internal Kube cluster
 # first what is the default overarching subnet?  
 variable cluster_cidr {default = "10.201.0.0/16" }
 
-# second: make sure the cluster_nets are within the cluster_cidr. 
-# also: make sure there are as many cluster nets as there are nodes.
-variable cluster_nets {
-  type = "list"
-  default = [
-    "10.201.0.0/24",
-    "10.201.1.0/24",
-    "10.201.2.0/24",
-  ]
-}
+# second: we will make individual ranges for each node.  What will it start with? 
+# right now only /24 is supported.  This prefix should match the cluster_cidr defined above. 
+variable cluster_nets_prefix {default = "10.201" }
+variable cluster_nets_suffix {default = "0/24" }
+
+# the interface device is the device your VM was/will be configured with by openstack.  Was it ens3? eth0? 
+# change it here.  This is used for static routes that will be placed in the nodes interface configuration
+# file so it can reach the other kube nodes. 
+variable if_dev {default = "ens3" }
 
 # The service cluster should not overlap with the cluster_cidr and is the network all services
 # will be constructed from.  
@@ -134,6 +133,7 @@ resource "openstack_compute_instance_v2" "kube-worker" {
   flavor_name = "${var.kube_flavor}"
   metadata {
     kube_role = "worker"
+    worker_number = "${count.index}"
   }
   network { 
     name = "${var.network}"
@@ -164,8 +164,12 @@ data "template_file" "kubernetes-csr" {
   }
 }
 
-output "certs" {
-  value = "${data.template_file.kubernetes-csr.rendered}"
+# debugging
+#output "certs" {
+#  value = "${data.template_file.kubernetes-csr.rendered}"
+#}
+output "cbr" {
+  value = "${data.template_file.cbr0.0.rendered}"
 }
 
 
@@ -203,7 +207,7 @@ resource "null_resource" "lbhosts" {
 }
 
 
-# copy the key to the master node. 
+# Get nginx working for the load balancer. 
 resource "null_resource" "lb2" {
   depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.lbhosts"]
 
@@ -221,11 +225,6 @@ resource "null_resource" "lb2" {
   }
 
   provisioner "file" {
-    source = "hostfile"
-    destination = "/home/ubuntu/hosts"
-  }
-
-  provisioner "file" {
     source = "${var.private_key_file}"
     destination = "/home/ubuntu/t5.pem"
   }
@@ -236,7 +235,6 @@ resource "null_resource" "lb2" {
       "sudo apt-get -y install nginx",
       "sudo mv nginx.conf /etc/nginx/",
       "sudo systemctl restart nginx",
-      "sudo mv hostfile /etc/hosts",
       "chmod 0400 /home/ubuntu/t5.pem"
     ]
   }
@@ -255,7 +253,7 @@ data "template_file" "etcd" {
 
 # get hosts file to the nodes. 
 resource "null_resource" "hosts" {
-  count = "${var.master_count + var.worker_count}"
+  count = "${var.master_count + var.worker_count + var.lb_count}"
   connection {
     type = "ssh"
     user = "${var.ssh_user}"
@@ -322,7 +320,7 @@ resource "null_resource" "etcd" {
       "sudo mv etcd-v3.0.10-linux-amd64/etcd* /usr/bin/",
       "sudo mkdir -p /var/lib/etcd",
       "sudo mkdir -p /etc/systemd/system",
-      "sudo cp etcd.service /etc/systemd/system",
+      "sudo mv etcd.service /etc/systemd/system",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable etcd",
       "sudo systemctl start etcd"
@@ -475,12 +473,20 @@ data "template_file" "kube-proxy" {
   }
 }
 
+
 # configure cbr0 individually on each host. 
 data "template_file" "cbr0" {
   count = "${var.worker_count}"
   template = "${file("templates/cbr0.cfg.tpl")}"
   vars {
-    docker_bridge = "${element(var.cluster_nets, count.index)}"
+    # this will create something like 201.25.(count).0/24
+    docker_bridge = "${format("%s.%d.0/24", var.cluster_nets_prefix, count.index )}"
+    # this will create a list of:  up route add -net 201.25.0.0/24 gw 10.106.0.144 dev ens3
+    static_routes = "${join("\n", formatlist("up route add -net %s.%s.0/24 gw %s dev %s", 
+                      var.cluster_nets_prefix, 
+                      openstack_compute_instance_v2.kube-worker.*.metadata.worker_number,
+                      openstack_compute_instance_v2.kube-worker.*.access_ip_v4, 
+                      var.if_dev))}"
   }
 }
 
@@ -560,7 +566,9 @@ resource "null_resource" "kube-workers" {
       "sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni", 
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
-      "sudo mv cbr0.cfg /etc/network/interfaces.d/",
+      # have to remove the local bridge entry for this host from cbr0
+      "sed -e 's/^up.* ${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg1",
+      "sudo mv cbr0.cfg1 /etc/network/interfaces.d/cbr0.cfg",
       "sudo mv kubeconfig /var/lib/kubelet/",
       "sudo mv kubectl kube-proxy kubelet /usr/bin",
       "sudo mv docker.service /etc/systemd/system/",

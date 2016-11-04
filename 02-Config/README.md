@@ -7,13 +7,10 @@ The previous lab just did all the set up for you but there is still some steps w
 We need to figure out what our machine nginx01 load balancer is so we can log into the machine
 
 ```
-openstack server list | grep <your nginx host name>
-```
-
-You will see two IP addresses.  The public IP address is the one we are after.  Make note of this IP.  It might be easiest to set an environment variable: 
-
-```
-export PUBLIC_IP=<nginx public IP>
+export NX=<my nginx hostname>
+export PUBLIC_IP=$(openstack server list | grep $NX \
+	 | awk -F'|' '{print $5}' | awk -F, '{print $2}')
+echo $PUBLIC_IP
 ```
 
 Now we need to set up ```kubectl``` so it can communicate with the cluster. This section is from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
@@ -27,9 +24,7 @@ Now let's configure ```kubectl```
 
 ```
 cd <certs directory>
-kubectl config set-cluster $CLUSTER \
-	--certificate-authority=ca.pem \
-	--embed-certs=true --server=https://$PUBLIC_IP
+kubectl config set-cluster $CLUSTER --server=https://$CLUSTER_IP --certificate-authority=ca.pem --embed-certs=true
 ```
 
 Remember the token we set in the Terraform file?  You can fish that out and run the following command so we can speak with that cluster: 

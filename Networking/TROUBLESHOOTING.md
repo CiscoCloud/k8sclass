@@ -266,3 +266,8 @@ ip address add 10.201.0.1/24 dev cbr0
 ip link set dev cbr0 up
 iptables -t nat -F POSTROUTING # not sure what this did...
 ```
+
+Bad route made it so wasn't going to the container. 
+```
+route del -net 10.201.0.0 gw 10.106.1.144 netmask 255.255.255.0 dev ens3
+```
