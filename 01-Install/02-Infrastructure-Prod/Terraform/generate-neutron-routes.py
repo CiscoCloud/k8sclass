@@ -78,8 +78,8 @@ if isinstance(servers, list):
             
    
     # now we should have everything. 
-    print "Got all the information.  Please run the following commands to enable Kubernetes networking:\n\n\n"
     print "=" * 80
+    print "Got all the information.  Please run the following commands to enable Kubernetes networking:\n\n"
     for server in servers:
         print "neutron port-update " + server['port'] + ' --allowed-address-pairs type=dict list=true ip_address=' + net_prefix + '.' + server['worker_number'] + '.0/24'
 else:
