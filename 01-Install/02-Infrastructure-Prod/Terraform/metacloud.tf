@@ -404,9 +404,15 @@ resource "null_resource" "kube-master" {
   }
 
   provisioner "file" {
+    content = "${data.template_file.rclocal.rendered}"
+    destination = "rc.local"
+  }
+
+  provisioner "file" {
     source = "templates/authorization-policy.jsonl"
     destination = "authorization-policy.jsonl"
   }
+
   
 
   # get the kubernetes binaries
@@ -431,6 +437,9 @@ resource "null_resource" "kube-master" {
       "sudo mv kube-apiserver.service /etc/systemd/system/",
       "sudo mv kube-controller-manager.service /etc/systemd/system/",
       "sudo mv kube-scheduler.service /etc/systemd/system/",
+      "sudo mv rc.local /etc/rc.local",
+      "sudo chmod 755 /etc/rc.local",
+      "sudo /etc/rc.local",   # actually define the static routes
       "sudo systemctl daemon-reload",
       "sudo systemctl enable kube-apiserver",
       "sudo systemctl enable kube-controller-manager",
@@ -489,6 +498,21 @@ data "template_file" "cbr0" {
                       var.if_dev))}"
   }
 }
+
+data "template_file" "rclocal" {
+  template = "${file("templates/rc.local.tpl")}"
+  vars {
+    # this will create a list of:  up route add -net 201.25.0.0/24 gw 10.106.0.144 dev ens3
+    static_routes = "${join("\n", formatlist("route add -net %s.%s.0/24 gw %s dev %s", 
+                      var.cluster_nets_prefix, 
+                      openstack_compute_instance_v2.kube-worker.*.metadata.worker_number,
+                      openstack_compute_instance_v2.kube-worker.*.access_ip_v4, 
+                      var.if_dev))}"
+  }
+}
+
+
+
 
 resource "null_resource" "kube-workers" {
   depends_on = ["null_resource.kube-master", "null_resource.certs"]
