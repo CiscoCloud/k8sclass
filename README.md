@@ -12,13 +12,16 @@ After taking this class, attendees will feel comfortable with the following Kube
 *  Basics of Kubernetes - different components, monitoring, accessing
 *  Deploying/scaling apps in Kubernetes
 
-Additionally, hands-on labs will provide real world experience with Kubernetes.
+Additionally, hands-on labs will provide real world experience with Kubernetes.  
+
+__DISCLAIMER__ Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack. 
 
 ## Agenda
 
 * Introduction to Kubernetes 
 * Kubernetes Platform Strategies (Bare Metal, OpenStack, Public Cloud)
 * Metacloud Introduction
+* [Environemt Setup](00-Setup/README.md)
 * Operating Systems Strategies (CoreOS, Ubuntu, CentOS/RedHat)
 * Kubernetes Installation Strategies (kubeadm, Packer, Terraform, Heat, Ansible)
 * [Installation Lab](01-Install/README.md)
