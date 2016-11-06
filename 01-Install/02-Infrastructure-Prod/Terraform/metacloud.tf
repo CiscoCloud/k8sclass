@@ -226,7 +226,7 @@ resource "null_resource" "lb2" {
 
   provisioner "file" {
     source = "${var.private_key_file}"
-    destination = "/home/ubuntu/t5.pem"
+    destination = "/home/ubuntu/${var.key_pair}.pem"
   }
 
   provisioner "remote-exec" {
@@ -235,7 +235,7 @@ resource "null_resource" "lb2" {
       "sudo apt-get -y install nginx",
       "sudo mv nginx.conf /etc/nginx/",
       "sudo systemctl restart nginx",
-      "chmod 0400 /home/ubuntu/t5.pem"
+      "chmod 0400 /home/ubuntu/${var.key_pair}.pem"
     ]
   }
 }

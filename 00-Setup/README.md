@@ -13,11 +13,11 @@ The Password is ```Cisco.123```
 
 If you chose you can set up your own environment and run the lab from your laptop. 
 
-## Access the Cloud
+## 1. Access the Cloud
 
 Once you have the prerequisites installed in the appendix below or are using the lab machine we now need to set up access to the OpenStack cloud.  
 
-### 1. Setup the OpenStack environment variables
+## 2. Setup the OpenStack environment variables
 
 You should be able to log into the openstack cluster with user name ```lab01``` and password: ```ri3Ci!Wa```
 
@@ -34,6 +34,8 @@ export OS_VOLUME_API_VERSION=1
 export OS_IMAGE_API_VERSION=1
 export OS_IMAGE_URL=<Image URL>
 ```
+
+
 Source this file: 
 
 ```
@@ -47,7 +49,15 @@ Test that it works:
 openstack server list
 ```
 
-#### 2. Get Source Files
+### Caveats for Liberty OpenStack builds
+The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
+
+```
+export OS_AUTH_URL=https://<given url>:5000/v3
+export OS_DOMAIN_NAME="<domain name>"
+```
+
+## 3. Get Source Files
 
 ```
 git clone https://github.com/CiscoCloud/k8sclass.git

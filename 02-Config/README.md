@@ -1,21 +1,29 @@
 # 2. Configure Kubernetes
 
-The previous lab just did all the set up for you but there is still some steps we need to complete!
+The previous lab just did all the set up for you to install kubernetes, but there is still some steps we need to complete!
 
 ## kubectl
 
-We need to figure out what our machine nginx01 load balancer is so we can log into the machine
+```kubectl``` is the command we use to communicate with our kubernetes cluster.  
+
+Our kubernetes cluster is front-ended by an nginx reverse proxy load balances that uses the 3 controllers.  
+
+Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added at ```01``` to the end of it.  So if you named your load-balancer ```fonzi-lb``` the name you need is ```fonzi-lb01```
+
+Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```fonzi-lb01```)
 
 ```
-export NX=<my nginx hostname>
-export PUBLIC_IP=$(openstack server list | grep $NX \
+export NX=<lb>
+export CLUSTER_IP=$(openstack server list | grep $NX \
 	 | awk -F'|' '{print $5}' | awk -F, '{print $2}')
-echo $PUBLIC_IP
+echo $CLUSTER_IP
 ```
+
+Make sure that last command returns an IP address.  If you have troubles run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer. 
 
 Now we need to set up ```kubectl``` so it can communicate with the cluster. This section is from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
 
-Name your cluster something fun and unique:
+Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea)
 
 ```
 export CLUSTER=<cluster_name>
@@ -23,8 +31,8 @@ export CLUSTER=<cluster_name>
 Now let's configure ```kubectl```
 
 ```
-cd <certs directory>
-kubectl config set-cluster $CLUSTER --server=https://$CLUSTER_IP --certificate-authority=ca.pem --embed-certs=true
+cd certs/
+kubectl config set-cluster $CLUSTER --server='https://$CLUSTER_IP' --certificate-authority=ca.pem --embed-certs=true
 ```
 
 Remember the token we set in the Terraform file?  You can fish that out and run the following command so we can speak with that cluster: 
@@ -37,6 +45,10 @@ kubectl config set-credentials admin --token <token>
 kubectl config set-context default-context \
   --cluster=$CLUSTER \
   --user=admin
+```
+
+```
+kubectl config use-context default-context
 ```
 
 You should be able to connect from your local machine to the kubernetes cluster through the nginx load balancer:

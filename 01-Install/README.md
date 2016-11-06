@@ -1,24 +1,42 @@
-# Installing Kubernetes
+# 01 Installing Kubernetes
 
-We will be using OpenStack for installing Kubernetes but many of these steps could be on bare metal, VMware, or GCE and AWS.  
+In this lab we will be installing Kubernetes on OpenStack.  Many of these steps could be on bare metal, VMware, or GCE and AWS.  They could also use various installers that are populor today including [kops](https://github.com/kubernetes/kops) or [kube-aws](https://github.com/coreos/coreos-kubernetes/releases)
 
-We will be modifying some components in the ```metacloud.tf``` file so we can quickly deploy the kubernetes cluster. 
+Instead we will be modeling our installation based on [Kelsey Hightower's Kubernetes the Hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) as this is more illustrative of the components used and has less mystery. 
+
+Because we don't want to spend all day just installing, we have made Terraform scripts to accomplish the installation.  
+
+To begin, we will be modifying the Terraform script to make it unique to your user team. 
+
+## 1.  Find the Terraform Directory
+
+```
+cd ~/k8sclass/01-Install/02-Infrastructure-Prod/Terraform/
+```
+Here you will find a few scripts, templates, and the  ```metacloud.tf``` file.  Open this file with your favorite text editor and we will change some values to deploy the cluster. 
 
 ## Node Unique Names
 
-Start by opening up the ```metacloud.tf``` file and change the ```master_name```, ```lb_name```, and ```worker_name``` to something unique.  This may be a combination of first initials that you can see, or a fun code word like ```dragon-controller``` or something. 
+Change the names to something unique for: 
+
+*   ```master_name```
+*    ```lb_name```
+*    ```worker_name``` 
+
+This may be a combination of first initials that you can see, or a fun code word like ```dragon-controller``` or something.  As an example it should look something like this: 
+
+```
+variable lb_name { default = "fonzi-lb"}
+variable master_name { default = "fonzi-controller"}
+variable worker_name { default = "fonzi-worker" }
+```
+(note these variable definitions are not consecutive in the file and are only defined once near the top. 
 
 ## OpenStack info
 
 You'll first need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. 
 
-### Caveats for Liberty OpenStack builds
-The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
 
-```
-export OS_AUTH_URL=https://<given url>:5000/v3
-export OS_DOMAIN_NAME="<domain name>"
-```
 
 ### Network
 
@@ -77,8 +95,9 @@ Kubernetes (and you) will need to access the nodes via ```ssh```.  You can enabl
 Generate a keypair by running: 
 
 ```
-openstack keypair create <keyname> | tee ~/.ssh/<keyname>.pem
-chmod 0600 ~/.ssh/<keyname>.pem
+export KEYNAME=<somekeyname>
+openstack keypair create $KEYNAME | tee ~/.ssh/$KEYNAME.pem
+chmod 0600 ~/.ssh/$KEYNAME.pem
 ```
 where ```<keypair>``` is the name you give your key. Maybe something clever like your name?  Favorite sports team?  Just be sure its unique!
 
@@ -110,7 +129,15 @@ Create a ```/16``` unique network.  The instructor will assign this but it may b
 ```
 10.<group#>.0.0/16
 ```
-e.g: ```10.14.0.0/16```
+e.g: ```10.214.0.0/16```
+
+#### cluster_nets_prefix
+
+Change the first two octets to match the previous entries first two octets. 
+
+```
+variable cluster_nets_prefix {default = "10.214" }
+```
 
 #### service__cluster__net
 Leave this as the existing setup. 
@@ -124,6 +151,9 @@ Leave this as defined.
 We will now build the cluster by running: 
 
 ```
+terraform plan
 terraform apply
 ```
 If this fails then check what variables might need to be changed, or rerun the configuration again.  It should finish cleanly.  If not, please see your instructor for help. 
+
+When this builds cleanly you are ready to go to the next lab and configure kubernetes. 
