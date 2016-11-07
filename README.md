@@ -1,38 +1,27 @@
 # Kubernetes Class
 
-Portland, OR
-Dec 1st, 2016
-
-Venue: Cisco Lake Oswego Office
+This repository contains the labs and scripts for a Cisco Kubernetes class offered by Cisco.
 
 ## Summary
 After taking this class, attendees will feel comfortable with the following Kubernetes topics: 
 
-*  Familiarities with k8s on different platforms
-*  Basics of Kubernetes - different components, monitoring, accessing
+*  Kubernetes components
+*  Deploying Kubernetes
+*  Basics of Kubernetes 
 *  Deploying/scaling apps in Kubernetes
 
 Additionally, hands-on labs will provide real world experience with Kubernetes.  
 
-__DISCLAIMER__ Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack. 
+__DISCLAIMER__ Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack offering named [Metacloud](http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html). 
 
-## Agenda
+## Labs
 
-* Introduction to Kubernetes 
-* Kubernetes Platform Strategies (Bare Metal, OpenStack, Public Cloud)
-* Metacloud Introduction
-* [Environemt Setup](00-Setup/README.md)
-* Operating Systems Strategies (CoreOS, Ubuntu, CentOS/RedHat)
-* Kubernetes Installation Strategies (kubeadm, Packer, Terraform, Heat, Ansible)
-* [Installation Lab](01-Install/README.md)
-* Kubernetes Networking (Flannel, Calico, Cannel, Weave)
-* [Configuration Lab](02-Config/README.md)
-* Launching and Managing Applications (kubectl commands)
-* [Running Lab](03-Running/README.md)
-* Integrating Kubernetes into CI/CD Pipeline (Drone, Jenkins)
-* [CI/CD Lab](04-CICD/README.md)
-* Monitoring Applications with Prometheus 
-* [Monitoring](05-Monitor/README.md)
+* [Environment Setup](00-Setup/README.md) - This lab covers setting up your workstation or logging into our lab machines to get started.  
+* [Installation Lab](01-Install/README.md) - This lab covers installing Kubernetes.  We use a Terraform script to bring it up quickly.  Its done on Metacloud. 
+* [Configuration Lab](02-Config/README.md) - This lab covers getting ```kubectl``` configured to work with our lab environment as well as the final touches of networking required to make our kubernetes cluster functional.  
+* [Running Lab](03-Running/README.md) - WIP
+* [CI/CD Lab](04-CICD/README.md) - WIP
+* [Monitoring](05-Monitor/README.md) - WIP
 
 
 
