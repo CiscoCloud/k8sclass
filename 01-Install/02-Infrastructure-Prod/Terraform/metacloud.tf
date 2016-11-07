@@ -253,6 +253,7 @@ data "template_file" "etcd" {
 
 # get hosts file to the nodes. 
 resource "null_resource" "hosts" {
+  depends_on = ["openstack_compute_instance_v2.lb", "openstack_compute_instance_v2.kube-worker", "openstack_compute_instance_v2.kube-master"]
   count = "${var.master_count + var.worker_count + var.lb_count}"
   connection {
     type = "ssh"
