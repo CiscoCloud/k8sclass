@@ -154,6 +154,13 @@ We will now build the cluster by running:
 terraform plan
 terraform apply
 ```
-If this fails then check what variables might need to be changed, or rerun the configuration again.  It should finish cleanly.  If not, please see your instructor for help. 
+If this fails then check what variables might need to be changed, or rerun the configuration again.  
 
-When this builds cleanly you are ready to go to the next lab and configure kubernetes. 
+__NOTE:__  There may be a bug in the terraform file so if it fails to build the first time but the builds the second time you should be fine.  
+
+It should finish cleanly.  If not, please see your instructor for help. 
+
+When this builds cleanly you are ready to go to the next lab to verify and configure kubernetes. 
+
+
+

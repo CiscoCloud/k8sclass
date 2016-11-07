@@ -2,9 +2,7 @@
 
 The previous lab just did all the set up for you to install kubernetes, but there is still some steps we need to complete!
 
-## kubectl
-
-```kubectl``` is the command we use to communicate with our kubernetes cluster.  
+## Verify Installation
 
 Our kubernetes cluster is front-ended by an nginx reverse proxy load balances that uses the 3 controllers.  
 
@@ -13,17 +11,55 @@ Remember in the last lab that you named your load balancer?  What was the name? 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```fonzi-lb01```)
 
 ```
-export NX=<lb>
-export CLUSTER_IP=$(openstack server list | grep $NX \
-	 | awk -F'|' '{print $5}' | awk -F, '{print $2}')
+export LB=<lb>
+export CLUSTER_IP=$(openstack server list | grep $LB \
+	 | awk -F"|" '{print $5}' | awk -F, '{print $2}')
 echo $CLUSTER_IP
 ```
 
 Make sure that last command returns an IP address.  If you have troubles run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer. 
 
-Now we need to set up ```kubectl``` so it can communicate with the cluster. This section is from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
+### Log into load balancer
 
-Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea)
+```
+ssh -i ~/.ssh/<key>.pem ubuntu@<CLUSTER_IP>
+```
+When you log in you should see the SSH key sitting in this directory.  Verify that your ```/etc/hosts``` file includes the names of your nodes.  
+
+Log into one of your controller nodes and check that the nodes are up: 
+
+```
+ssh -i ~/<key>.pem <controller0X>
+```
+e.g:
+
+```
+ssh -i ~/gobears.pem fonzi-controller02
+```
+
+Once logged in see if nodes are up: 
+
+```
+ubuntu@fonzi-controller03:~$ kubectl get nodes
+NAME              STATUS    AGE
+fonzi-vworker01   Ready     4h
+fonzi-vworker02   Ready     4h
+fonzi-vworker03   Ready     4h
+```
+
+If the nodes are up and ready you can move to the next step!
+
+## kubectl
+
+```kubectl``` is the command we use to communicate with our kubernetes cluster.  It was installed on the controller nodes, but now you need to make it work from your workstation or your lab machine. 
+
+To set up ```kubectl``` so it can communicate with the cluster we will follow the instructions from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
+
+__Log off of from the controller nodes to do the following.__
+
+### Give Cluster a name
+Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea).  Hint:  ```grep cluster_name metacloud.tf | grep variable``` to get the name. 
+
 
 ```
 export CLUSTER=<cluster_name>
@@ -32,10 +68,10 @@ Now let's configure ```kubectl```
 
 ```
 cd certs/
-kubectl config set-cluster $CLUSTER --server='https://$CLUSTER_IP' --certificate-authority=ca.pem --embed-certs=true
+kubectl config set-cluster $CLUSTER --server='https://<CLUSTER_IP>' --certificate-authority=ca.pem --embed-certs=true
 ```
 
-Remember the token we set in the Terraform file?  You can fish that out and run the following command so we can speak with that cluster: 
+Remember the token we set in the Terraform file?  You can fish that (hint: ```grep token metacloud.tf | grep variable```) out and run the following command so we can speak with that cluster:
 
 ```
 kubectl config set-credentials admin --token <token>
@@ -72,107 +108,48 @@ kworker03   Ready     1h
 
 [More source info](http://kubernetes.io/docs/user-guide/kubectl-cheatsheet/)
 
+Now you are set up to talk to the kubernetes cluster from your workstation!
+
 ## Configure overlay networking
 
 In most of the kubernetes guides you'll find recommendations to use weave, flannel, calico, or some other networking overlay.  With OpenStack, we already have a network overlay called neutron, so we'll use it!
 
-(Note: For more information on this section see [this excellent blog post](http://blogs.cisco.com/cloud/deploy-a-kubernetes-cluster-on-openstack-using-ansible))
+This method is also similar to using bare metal kubernetes where there is a simple network switch connecting all nodes. 
 
-We'll have to first define our static routes.  Run the following command to figure out which node is responsible for which network: 
+(Note: For other information on this section see [this excellent blog post](http://blogs.cisco.com/cloud/deploy-a-kubernetes-cluster-on-openstack-using-ansible))
+
+We'll have to first define our static routes.  
+
+Open up the ```generate-neutron-routes.py``` script found in the same directory as the ```metacloud.tf``` file.  There are two variables that need to be changed near the beginning of the file.  These are: 
 
 ```
-kubectl get nodes  --output=jsonpath='{range .items[*]}{.status.addresses[?(@.type=="InternalIP")].address} {.spec.podCIDR} {"\n"}{end}' | awk '{print $2 "," $1}'
+prefix = "fonzi-vworker"
+net_prefix = "10.214"
+```
+Change the prefix to match the prefix in your ```metacloud.tf``` file for the worker nodes.  
+
+Change the net_prefix to match the ```cluster_nets_prefix``` and ```cluster_cidr``` prefix.  
+
+```
+./generate-neutron-routes.py
 ```
 This gives us output like: 
 
 ```
-10.200.2.0/24,10.106.1.26
-10.200.1.0/24,10.106.1.28
-10.200.0.0/24,10.106.1.30
-```
-Which is exactly what we can put into our subnets.
-
-__IMPORTANT__ you will need openstackclient 3.3 for this command to work: 
-
-```
-pip install --upgrade python-openstackclient
-```
-Next we find all the ports in our network: 
-
-```
-openstack port list --network pipeline
+neutron port-update 3325e20d-29b0-4da7-ac2f-5ad54ab390f3 --allowed-address-pairs type=dict list=true ip_address=10.214.0.0/24
+neutron port-update 9958fc43-075d-4577-9374-467c21c19371 --allowed-address-pairs type=dict list=true ip_address=10.214.1.0/24
+neutron port-update 550eabc3-df51-4586-9680-b4b3f7279bea --allowed-address-pairs type=dict list=true ip_address=10.214.2.0/24
 ```
 
+These are the openstack commands that need to be run to enable the routes for your kubernetes cluster.  Since your openstack user doesn't have the ability to run these commands then you'll have to get these commands to the instructor so they can run these commands for you. 
 
-We will use neutron as the overlay network instead of something like weave or flannel.  This is done on an admin account with a command like: 
+Once they run these commands they will let you know and you can move on!
 
-```
-neutron port-update 1b6b5e18-bd6c-4924-804f-bfa61432d4b4 \
---allowed-address-pairs type=dict list=true \
-ip_address=10.200.2.0/24 \
-ip_address=192.168.0.0/16 \
-ip_address=172.31.232.0/21
-```
-Here this is the UUID of the port and then we are saying which subnets we allow through the port. 
 
-```
-neutron port-update ce036350-e199-423a-a1cf-480f009f9f91 \
---allowed-address-pairs type=dict list=true ip_address=10.201.1.0/24
-```
-```
-neutron port-update adbce357-da18-4b2c-aef7-3c17c67bbc43 \
---allowed-address-pairs type=dict list=true ip_address=10.201.2.0/24
-```
-Check that its working with: 
-
-```
-neutron port-show c49e2845-d20b-41da-b18a-30c4ada8e97a
-+-----------------------+-------------------------------------------------------------------------------------+
-| Field                 | Value                                                                               |
-+-----------------------+-------------------------------------------------------------------------------------+
-| admin_state_up        | True                                                                                |
-| allowed_address_pairs | {"ip_address": "10.201.0.0/24", "mac_address": "fa:16:3e:16:d0:44"}                 |
-| binding:host_id       | mhv6.trial5.mc.metacloud.in                                                         |
-| binding:profile       | {}                                                                                  |
-| binding:vif_details   | {"port_filter": true}                                                               |
-| binding:vif_type      | bridge                                                                              |
-| binding:vnic_type     | normal                                                                              |
-| device_id             | 49cc915e-e04f-47da-a234-9d29cbb5cce5                                                |
-| device_owner          | compute:None                                                                        |
-| extra_dhcp_opts       |                                                                                     |
-| fixed_ips             | {"subnet_id": "e9e30169-44b0-4b17-8aaa-77852190875e", "ip_address": "10.106.1.144"} |
-| id                    | c49e2845-d20b-41da-b18a-30c4ada8e97a                                                |
-| mac_address           | fa:16:3e:16:d0:44                                                                   |
-| name                  |                                                                                     |
-| network_id            | b0c2ce4c-d706-4094-b7fb-243ddeada563                                                |
-| security_groups       | 289dd19a-194d-4026-915b-d75ec4d890c1                                                |
-| status                | ACTIVE                                                                              |
-| tenant_id             | 0b42f5efc6de46cb8a3119e5f667b868                                                    |
-+-----------------------+-------------------------------------------------------------------------------------+
-```
-Notice that we see the port 
-
-__IMPORTANT:__ At this point give the instructor the output of this last command.  When the instructor gives you the green light, reboot your nodes for these routes to take effect. 
- 
-Upon reboot you can go into the nginx server and verify that the routes are set with
-
-```
-route -n 
-```
-You should see the static routes configured in the route table: 
-
-```
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         10.106.0.1      0.0.0.0         UG    0      0        0 ens3
-10.106.0.0      0.0.0.0         255.255.0.0     U     0      0        0 ens3
-10.200.0.0      10.106.1.30     255.255.255.0   UG    0      0        0 ens3
-10.200.1.0      10.106.1.28     255.255.255.0   UG    0      0        0 ens3
-10.200.2.0      10.106.1.26     255.255.255.0   UG    0      0        0 ens3
-169.254.169.254 10.106.0.2      255.255.255.255 UGH   0      0        0 ens3
-```
 
 ## Kubernetes DNS
+
+From our workstation we can now run the following commands to get kubernetes DNS running on our cluster: 
 
 ```
 kubectl create -f https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/master/services/kubedns.yaml
@@ -191,9 +168,15 @@ Check that services are up
 ```
 kubectl --namespace=kube-system get deployments
 kubectl --namespace=kube-system get svc
-kubectl --namespace=kube-system get pods
+kubectl --namespace=kube-system get pods -o wide
 ```
-Check individual nodes to see if they are up: 
+If all goes well that last command should give you output similar to: 
+
+```
+NAME                            READY     STATUS    RESTARTS   AGE       IP           NODE
+kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   fonzi-vworker01
+kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   fonzi-vworker03
 
 ```
 
+Hurray!  Now kubedns is up!
