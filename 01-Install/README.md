@@ -1,8 +1,15 @@
 # 01 Installing Kubernetes
 
-In this lab we will be installing Kubernetes on OpenStack.  Many of these steps could be on bare metal, VMware, or GCE and AWS.  They could also use various installers that are populor today including [kops](https://github.com/kubernetes/kops) or [kube-aws](https://github.com/coreos/coreos-kubernetes/releases)
+In this lab we will be installing Kubernetes on OpenStack.  Many of these steps could be on bare metal, VMware, or GCE and AWS.  
 
-Instead we will be modeling our installation based on [Kelsey Hightower's Kubernetes the Hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) as this is more illustrative of the components used and has less mystery. 
+Additionally, there are much more robust ways to install kubernetes.  Many popular installers are out there today including:
+
+*  [kops](https://github.com/kubernetes/kops) 
+*  [kube-aws](https://github.com/coreos/coreos-kubernetes/releases)
+*  [kubeadm](http://kubernetes.io/docs/getting-started-guides/kubeadm/)
+*  [bootkube](https://github.com/kubernetes-incubator/bootkube)
+
+These installers have a bit of magic to them so instead we will be modeling our installation from [Kelsey Hightower's Kubernetes the Hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) as this is more illustrative of the components used and has less mystery.  While we'll still automate most of it, we'll have a few parts to modify to bring home key concepts. 
 
 Because we don't want to spend all day just installing, we have made Terraform scripts to accomplish the installation.  
 

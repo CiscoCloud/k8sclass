@@ -20,7 +20,7 @@ variable lb_count { default = "1" }
 variable master_name { default = "kube-controller"}
 variable master_count { default = "3" }
 variable worker_name { default = "kube-worker" }
-variable worker_count { default = "4" }
+variable worker_count { default = "3" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
 ## OpenStack Variables
