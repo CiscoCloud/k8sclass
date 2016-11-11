@@ -15,12 +15,12 @@
 # up in Openstack as the hostnames. 
 # This also includes the quantities.  3 controllers gives redundancy and is a safe pick. 
 # for the workers pick as many as you have room for.  
-variable lb_name { default = "vnginx"}
+variable lb_name { default = "nginx"}
 variable lb_count { default = "1" }
-variable master_name { default = "vcontroller"}
+variable master_name { default = "kube-controller"}
 variable master_count { default = "3" }
-variable worker_name { default = "vworker" }
-variable worker_count { default = "3" }
+variable worker_name { default = "kube-worker" }
+variable worker_count { default = "4" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
 ## OpenStack Variables
@@ -149,6 +149,8 @@ data "template_file" "nginx" {
     server1 = "${openstack_compute_instance_v2.kube-master.0.access_ip_v4}"
     server2 = "${openstack_compute_instance_v2.kube-master.1.access_ip_v4}"
     server3 = "${openstack_compute_instance_v2.kube-master.2.access_ip_v4}"
+    worker1 = "${openstack_compute_instance_v2.kube-worker.0.access_ip_v4}"
+    worker2 = "${openstack_compute_instance_v2.kube-worker.1.access_ip_v4}"
   }
 }
 
@@ -232,8 +234,9 @@ resource "null_resource" "lb2" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
-      "sudo apt-get -y install nginx",
+      "sudo apt-get -y install nginx apache2-utils",
       "sudo mv nginx.conf /etc/nginx/",
+      "htpasswd -bc /etc/nginx/htpasswd kubeadm k8sclass",
       "sudo systemctl restart nginx",
       "chmod 0400 /home/ubuntu/${var.key_pair}.pem"
     ]

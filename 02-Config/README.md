@@ -180,3 +180,41 @@ kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.
 ```
 
 Hurray!  Now kubedns is up!
+
+## Kubernetes Dashboard
+
+How can we talk to the API externally?  By default, the web interface is not exposed.  We could go into the ```certs/``` directory again and run something like: 
+
+```
+curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
+```
+This mimics to some extent what kubectl is doing.  
+
+
+
+To install the kubernetes dashboard we run: 
+
+```
+kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+```
+Make sure its up:
+
+```
+$ kubectl get pods -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE
+kube-dns-v20-1485703853-oc6hj           3/3       Running   0          3m
+kube-dns-v20-1485703853-pp1ko           3/3       Running   0          3m
+kubernetes-dashboard-3203700628-5zhl8   1/1       Running   0          12s
+```
+If you try to access the IP address of the load balancer: ```https://lb``` then you'll get ```unauthorized``` in your web browser. So we need a way to attach to the web interface.  
+
+One way we can do this is by running the command: 
+
+```
+kubectl proxy 
+```
+This will open port 8001 that lets you access the dashboard via the web interface at ```https://localhost:8001```.  
+
+Note: If the port is unavailable, you can always do something like ```kubectl proxy -p 6500``` to use port ```6500``` instead of the default port.  You should then be able to access the dashboard: 
+
+![kubernetes file](images/kubedash.png)

@@ -6,7 +6,7 @@ import os
 import re
 import json
 
-prefix = "vworker"
+prefix = "kube-worker"
 net_prefix = "10.201"
 
 
