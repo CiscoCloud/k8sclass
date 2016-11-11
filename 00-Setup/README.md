@@ -35,6 +35,9 @@ export OS_IMAGE_API_VERSION=1
 export OS_IMAGE_URL=<Image URL>
 ```
 
+To get these variables you may need to log into Metacloud and look at Access & Security in your project and then check the API Access screen. 
+
+![api access](images/mc1.png)
 
 Source this file: 
 
