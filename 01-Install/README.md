@@ -103,6 +103,7 @@ Generate a keypair by running:
 
 ```
 export KEYNAME=<somekeyname>
+mkdir -p ~/.ssh
 openstack keypair create $KEYNAME | tee ~/.ssh/$KEYNAME.pem
 chmod 0600 ~/.ssh/$KEYNAME.pem
 ```
