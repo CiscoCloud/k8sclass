@@ -97,7 +97,9 @@ variable kube_flavor { default = "m1.large" }
 
 ### Key 
 
-Kubernetes (and you) will need to access the nodes via ```ssh```.  You can enable this by creating your own key pair.  
+Save the ```metacloud.tf``` file to do this next session.  Kubernetes (and you) will need to access the nodes via ```ssh```.  You will need to create a key pair so you can log into the VMs that your terraform configuration is about to create.  
+
+In cloud systems we use key pairs (public and private keys) to access instances ("instance" is a classy word for a "VM" created in the cloud).  
 
 Generate a keypair by running: 
 
@@ -107,9 +109,9 @@ mkdir -p ~/.ssh
 openstack keypair create $KEYNAME | tee ~/.ssh/$KEYNAME.pem
 chmod 0600 ~/.ssh/$KEYNAME.pem
 ```
-where ```<keypair>``` is the name you give your key. Maybe something clever like your name?  Favorite sports team?  Just be sure its unique!
+where ```<somekeyname>``` is the name you give your key. Maybe something clever like your name?  Favorite sports team?  Just be sure its unique!
 
-Update the ```metacloud.tf``` file with the new key information.  e.g.:
+When you are finished, continue editing the ```metacloud.tf``` file with the name of this key you just created.  Update the sections below with the name of your keypair:
 
 ```
 variable key_pair { default = "<keypair>" }
@@ -122,7 +124,8 @@ where ```<keypair>``` is the name you gave it below.
 Find the section ```Kubernetes Variables``` after the openstack section near the top of the ```metacloud.tf``` file.  We will modify some variables here. 
 
 #### kube_token
-Change this to be something unique.  e.g.: a password. 
+Change this to be something unique.  e.g.: a password.  This is going to be the token used by components within the Kubernetes cluster to access the API server. 
+
 ```
 variable kube_token { default = "f00bar.f00barf00bar1234" }
 ```

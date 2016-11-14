@@ -29,7 +29,7 @@ variable count_format { default = "%02d" } #server number format (01, 02, ...)
 # should be Ubuntu 16.04 and reasonable size. 
 
 variable ssh_user { default = "ubuntu" }  # what is the user name that should be used to log into the nodes? 
-variable network { default = "pipeline" } # what openstack network do we use? 
+variable network { default = "lab-net" } # what openstack network do we use? 
 variable kube_image { default = "ubuntu_1604_server_cloudimg_amd64"} # what image do we use? 
 variable kube_flavor { default = "m1.large" } # the flavor of the machines.  
 variable key_pair { default = "t5" } # what is the keypair name to use?  This should already have been created. 
