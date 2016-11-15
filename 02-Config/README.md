@@ -152,16 +152,25 @@ Once they run these commands they will let you know and you can move on!
 From our workstation we can now run the following commands to get kubernetes DNS running on our cluster: 
 
 ```
-kubectl create -f https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/master/services/kubedns.yaml
+kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/kubedns.yaml
 ```
+This creates a service called kube-dns.  What it will do is it will look for any pods with app name = kube-dns.  Then it will open up IP address ```10.32.0.10``` to them. You can read more about Kuberentes services [here](http://kubernetes.io/docs/user-guide/services/)
+
+Now you can run the command: 
 
 ```
 kubectl --namespace=kube-system get svc
 ```
 
+Next we will create the DNS deployment.  This is where we will actually build several containers with kuberentes.  
+
+Run the command: 
+
 ```
-kubectl create -f https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/master/deployments/kubedns.yaml
+kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/deployments/kubedns.yaml
 ```
+
+Kuberentes reads the file and deploys containers based on what it says to do.  You can [look at the file here](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/deployments/kubedns.yaml).  Notice that the ```kind``` is ```Deployment```.  There are 3 container images specified that will be deployed:  ```kubedns```, ```dnsmasq```, and ```healthz```.  These containers will all be deployed in a single pod.  Line 25 also shows that 2 of these pods will be created.  
 
 Check that services are up
 
@@ -183,20 +192,34 @@ Hurray!  Now kubedns is up!
 
 ## Kubernetes Dashboard
 
-How can we talk to the API externally?  By default, the web interface is not exposed.  We could go into the ```certs/``` directory again and run something like: 
+How can we talk to the API externally?  By default, the web interface is not exposed, not even to the lab machine. 
+
+First we will install the basic deployment: 
+
+```
+kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+```
+
+
+#### Option 1
+
+We could go into the ```certs/``` directory again and run something like: 
 
 ```
 curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
 ```
-This mimics to some extent what kubectl is doing.  
+This mimics to some extent what kubectl is doing.  We use the token and the certificate to authenticate with the API server.  
+
+#### Option 2
+
+You could also 
 
 
 
 To install the kubernetes dashboard we run: 
 
 ```
-kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
-```
+
 Make sure its up:
 
 ```
