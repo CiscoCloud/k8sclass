@@ -12,8 +12,8 @@ Once you know this, run the following commands substituting <lb> in with your lo
 
 ```
 export LB=<lb>
-export CLUSTER_IP=$(openstack server list | grep $LB \
-	 | awk -F"|" '{print $5}' | awk -F, '{print $2}')
+export CLUSTER_IP=$(openstack server list | grep -i $LB \
+	 | awk -F"|" '{print $5}' | awk -F, '{print $2}' | xargs)
 echo $CLUSTER_IP
 ```
 
