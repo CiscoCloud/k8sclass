@@ -2,6 +2,8 @@
   \"CN\": \"kubernetes\",
   \"hosts\": [
     \"127.0.0.1\",
+    \"kubernetes.default.svc\",
+    \"kubernetes.default.svc.cluster.local\",
     \"${cluster_ip}\",
     \"${public_ip}\",
     \"${lb_ip}\",
