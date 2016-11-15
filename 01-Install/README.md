@@ -11,16 +11,27 @@ Additionally, there are much more robust ways to install kubernetes.  Many popul
 
 These installers have a bit of magic to them so instead we will be modeling our installation from [Kelsey Hightower's Kubernetes the Hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) as this is more illustrative of the components used and has less mystery.  While we'll still automate most of it, we'll have a few parts to modify to bring home key concepts. 
 
-Because we don't want to spend all day just installing, we have made Terraform scripts to accomplish the installation.  
+Because we don't want to spend all day just installing, we have made Terraform scripts to accomplish the installation. 
 
-To begin, we will be modifying the Terraform script to make it unique to your user team. 
+### Goals of this lab
+In this lab we will install 7 servers: 
+
+* __1 NGINX load balancer__ that we will use to access kubernetes services from the outside.  This load balancer will also be used to load balance our kubernetes master nodes. 
+* __3 Kubernetes master/controller nodes__  These nodes will provide high availability for cluster services. 
+* __3 Kubernetes worker nodes__ Also known as minions these nodes will be where containers run for our cluster.  
+
+By the end of this lab, these 7 nodes will be running on OpenStack and be _mostly_ ready to run workloads.  The [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/README.md) will then finalize the configuration. 
 
 ## 1.  Find the Terraform Directory
 
+Most of this lab will be modifying a Terraform script that will be used to deploy the nodes.  First, find the terraform script: 
+
 ```
-cd ~/k8sclass/01-Install/02-Infrastructure-Prod/Terraform/
+cd ~/k8sclass/01-Install/Terraform/
 ```
-Here you will find a few scripts, templates, and the  ```metacloud.tf``` file.  Open this file with your favorite text editor and we will change some values to deploy the cluster. 
+(If this directory does not exist you didn't finish the [setup lab!](https://github.com/CiscoCloud/k8sclass/blob/master/00-Setup/README.md)  Go back and run the ```git clone``` command!)
+
+In this directory you will find a few scripts, templates, and the  ```metacloud.tf``` file.  Open this file with your favorite text editor and we will change some values to deploy the cluster. 
 
 ## Node Unique Names
 
@@ -37,34 +48,35 @@ variable lb_name { default = "fonzi-lb"}
 variable master_name { default = "fonzi-controller"}
 variable worker_name { default = "fonzi-worker" }
 ```
-(note these variable definitions are not consecutive in the file and are only defined once near the top. 
+__Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.)
+
+__Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  
 
 ## OpenStack info
 
-You'll first need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. 
-
-
+Next you'll need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. Then we will put these values into the ```metacloud.tf``` file.  If you are running on a lab machine, you may want to open another terminal so you have one terminal to edit the ```metacloud.tf``` file and another terminal to run commands on. 
 
 ### Network
 
-You'll need to know which network your cluster will be deployed on.  This should be assigned.  You can find it by running: 
+You'll need to know which network your cluster will be deployed on.  Ask the instructor if they haven't told you already (or ask again if you weren't paying attention), or go dangerous and try to find it yourself: 
 
 ```
 openstack network list
 ```
-From the list of networks make note of which one is used for your environment. This should then be updated in the ```metacloud.tf``` file in this repository. 
+
+From the list of networks make note of which one is used for your environment.  It will be the same network that the lab machine is on. This should then be updated in the ```metacloud.tf``` file in this repository. 
 
 e.g. if my network was named "twenty", I would update the file to be:
 ```
 variable network { default = "twenty" } 
 ```
 
-We need to figure out where the ip pool will come from.  In OpenStack we want to give our public facing nodes a floating IP address so we can connect remotely to that node via ssh.  This will be given to you by the instructor, but should be something like: ```PUBLIC - DO NOT MODIFY```.  Update the ```metacloud.tf``` file with this information.  e.g.:
+Next you need to figure out where the ip pool will come from.  In OpenStack we want to give our public facing nodes a floating IP address so we can connect remotely to that node via ssh.  This will be given to you by the instructor, but should be something like: ```PUBLIC - DO NOT MODIFY```.  Update the ```metacloud.tf``` file with this information.  e.g.:
 
 ```
 variable ip_pool { default = "PUBLIC EXTERNAL - DO NOT MODIFY" } 
 ```
-
+__Note:__ You may not need to change some of these values as they may already be set correctly. Lucky you! 😀
 
 ### Image Information
 
@@ -84,6 +96,8 @@ You should also know what the user is to log into this image.  Your instructor s
 ```
 variable ssh_user { default = "ubuntu" }
 ```
+Most likely it will just be ```ubuntu``` so leave it at that unless you are told otherwise.  
+
 Next you need to know which flavor to use. 
 
 ```
