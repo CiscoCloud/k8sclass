@@ -236,7 +236,7 @@ resource "null_resource" "lb2" {
       "sudo apt-get update",
       "sudo apt-get -y install nginx apache2-utils",
       "sudo mv nginx.conf /etc/nginx/",
-      "htpasswd -bc /etc/nginx/htpasswd kubeadm k8sclass",
+      "sudo htpasswd -bc /etc/nginx/htpasswd kubeadm k8sclass",
       "sudo systemctl restart nginx",
       "chmod 0400 /home/ubuntu/${var.key_pair}.pem"
     ]
