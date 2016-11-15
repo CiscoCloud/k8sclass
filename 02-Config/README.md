@@ -213,7 +213,60 @@ Now, how can we access this dashboard externally?  By default, these services ar
 Download a template file running: 
 
 ```
+wget https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/dashboard.yaml
+```
 
+Edit this file.  You will see that there are three places where you can add your worker node IP addresses:
+
+```yaml
+...
+ externalIPs:
+  - <worker1 IP address>
+  - <worker2 IP address>
+  - <worker3 IP address>
+...
+```
+Substitute the values of your worker IP addresses.  You can get the IP addresses in the ```hostfile``` in the same directory where the ```metacloud.tf``` file is or use the ```openstack server list``` command. 
+
+When completed it should look something like this: 
+
+```yaml
+...
+ externalIPs:
+  - 192.168.7.107
+  - 192.168.7.105
+  - 192.168.7.110
+...
+```
+
+Now you can deploy this service: 
+
+```
+kubectl create -f dashboard.yaml
+```
+(make sure you run that command in the same directory where the ```dashboard.yaml``` file is that you just edited!)
+
+If all went well, you should be able to see this service running: 
+
+```
+kubectl get svc -n kube-system
+NAME                   CLUSTER-IP   EXTERNAL-IP                                 PORT(S)         AGE
+kube-dns               10.32.0.10   <none>                                      53/UDP,53/TCP   6h
+kubernetes-dashboard   10.32.0.11   192.168.7.107,192.168.7.105,192.168.7.110   9999/TCP        21m
+```
+Notice that the port that this service exposes is 9999.  If you look in the ```templates/nginx.conf.tpl``` file you'll see that we mapped port ```80``` externally to point to this ```9999``` internal port.  You should now be able to open a web browser and pull up the dashboard: 
+
+```
+http://<load-balancer-floating-ip-address>
+```
+You'll then be prompted for a user name and password.  We specified this in the ```metacloud.tf``` file.  (you can see it around line 239 with the ```htpasswd``` command)
+
+```
+username: kubeadm
+```
+```
+password: k8sclass
+```
 
 #### Option 1
 
