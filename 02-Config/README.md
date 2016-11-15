@@ -268,26 +268,39 @@ username: kubeadm
 password: k8sclass
 ```
 
-#### Option 1
+If all goes well you should see the dashboard: 
 
-We could go into the ```certs/``` directory again and run something like: 
+![kubernetes file](images/kubedash.png)
+
+
+## Optional Stuff (feel free to ignore)
+
+(Ignore unless you want to see other ways to communicate with the API server)
+
+### Using Curl to communicate with API server
+
+Kubernetes gives us the ```kubectl``` command but it is just a client for accessing the Kubernetes API server.  We could access it directly with ```curl```. 
+
+Go into the ```certs/``` directory again and run something like: 
 
 ```
 curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
 ```
-This mimics to some extent what kubectl is doing.  We use the token and the certificate to authenticate with the API server.  But this isn't the dashboard, this is simply the API. 
 
-#### Option 2
+Where ```<token>``` is what you defined in the ```metacloud.tf``` file and used in previous steps. 
 
-If you try to access the IP address of the load balancer: ```https://lb``` then you'll get ```unauthorized``` in your web browser. So we need a way to attach to the web interface.  
+This mimics to some extent what kubectl is doing.  We use the token and the certificate to authenticate with the API server.  This isn't the dashboard, this is simply the API. 
 
-One way we can do this is by running the command: 
+#### Using Kubectl proxy to access the API server
+
+If we didn't have nginx front loading and providing us a way into the cluster we could proxy into the lab.  Running the command: 
 
 ```
-kubectl proxy 
+kubectl proxy -n <port>
 ```
-This will open port 8001 that lets you access the dashboard via the web interface at ```https://localhost:8001```.  
+Where port = 8000 + <your lab group>, e.g.: 8001, 8002, ...
 
-Note: If the port is unavailable, you can always do something like ```kubectl proxy -p 6500``` to use port ```6500``` instead of the default port.  You should then be able to access the dashboard: 
+This will open port 800X that lets you access the dashboard via the web interface at ```https://localhost:800X/api/v1/pods```.  
 
-![kubernetes file](images/kubedash.png)
+
+
