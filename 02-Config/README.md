@@ -192,12 +192,26 @@ Hurray!  Now kubedns is up!
 
 ## Kubernetes Dashboard
 
-How can we talk to the API externally?  By default, the web interface is not exposed, not even to the lab machine. 
 
-First we will install the basic deployment: 
+First we will install the dashboard as a basic deployment (e.g: Pods): 
 
 ```
-kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/deployments/kubernetes-dashboard.yaml
+```
+Make sure its up:
+
+```
+$ kubectl get pods -n kube-system
+NAME                                    READY     STATUS    RESTARTS   AGE
+kube-dns-v20-1485703853-oc6hj           3/3       Running   0          3m
+kube-dns-v20-1485703853-pp1ko           3/3       Running   0          3m
+kubernetes-dashboard-3203700628-5zhl8   1/1       Running   0          12s
+```
+
+Now, how can we access this dashboard externally?  By default, these services are not exposed outside the cluster.  What we can do is create a service from this deployment.  
+
+Download a template file running: 
+
 ```
 
 
@@ -208,27 +222,10 @@ We could go into the ```certs/``` directory again and run something like:
 ```
 curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
 ```
-This mimics to some extent what kubectl is doing.  We use the token and the certificate to authenticate with the API server.  
+This mimics to some extent what kubectl is doing.  We use the token and the certificate to authenticate with the API server.  But this isn't the dashboard, this is simply the API. 
 
 #### Option 2
 
-You could also 
-
-
-
-To install the kubernetes dashboard we run: 
-
-```
-
-Make sure its up:
-
-```
-$ kubectl get pods -n kube-system
-NAME                                    READY     STATUS    RESTARTS   AGE
-kube-dns-v20-1485703853-oc6hj           3/3       Running   0          3m
-kube-dns-v20-1485703853-pp1ko           3/3       Running   0          3m
-kubernetes-dashboard-3203700628-5zhl8   1/1       Running   0          12s
-```
 If you try to access the IP address of the load balancer: ```https://lb``` then you'll get ```unauthorized``` in your web browser. So we need a way to attach to the web interface.  
 
 One way we can do this is by running the command: 

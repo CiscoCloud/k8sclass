@@ -1,0 +1,29 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+    kubernetes.io/cluster-service: "true"
+  name: kubernetes-dashboard
+  namespace: kube-system
+  selfLink: /api/v1/namespaces/kube-system/services/kubernetes-dashboard
+spec:
+  clusterIP: 10.32.0.11
+  externalIPs:
+  - <worker1 IP address>
+  - <worker2 IP address>
+  - <worker3 IP address>
+  ports:
+  - port: 9999
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    k8s-app: kubernetes-dashboard
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
