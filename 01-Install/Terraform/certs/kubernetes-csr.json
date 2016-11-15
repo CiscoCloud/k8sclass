@@ -1,0 +1,37 @@
+{
+  "CN": "kubernetes",
+  "hosts": [
+    "127.0.0.1",
+    "10.32.0.1",
+    "184.94.251.16",
+    "10.106.1.245",
+    "kube-worker01",
+"10.106.1.240",
+"kube-worker02",
+"10.106.1.243",
+"kube-worker03",
+"10.106.1.241",
+"kube-worker04",
+"10.106.1.239",
+    "kube-controller01",
+"10.106.1.242",
+"kube-controller02",
+"10.106.1.238",
+"kube-controller03",
+"10.106.1.244"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "Cluster",
+      "ST": "Oregon"
+    }
+  ]
+}
+
