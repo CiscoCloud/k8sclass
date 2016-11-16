@@ -9,7 +9,7 @@ The instructor will give you a login to log in to the machines and all installat
 ```
 ssh <font color="red"><username></font>@<ip>
 ```
-The Password is ```Cisco.123```
+The <font color="red"> Password </font> is ```Cisco.123```
 
 If you chose you can set up your own environment and run the lab from your laptop. 
 
