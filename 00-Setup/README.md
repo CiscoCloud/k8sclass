@@ -7,7 +7,7 @@ In this lab you have the option of using one of our VMs that has all of the tool
 The instructor will give you a login to log in to the machines and all installation work can be done there. 
 
 ```bash
-ssh <font color="red"><username></font>@<ip>
+ssh <username>@<ip>
 ```
 The Password is ```Cisco.123```
 
