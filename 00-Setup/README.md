@@ -23,7 +23,7 @@ You should be able to log into the openstack cluster with user name ```lab01``` 
 
 Set the following in your ```~/.profile``` file: 
 
-```
+```bash
 export OS_AUTH_URL=<Metacloud>
 export OS_TENANT_ID=<Tenant ID>
 export OS_TENANT_NAME=<Tenant Name>
