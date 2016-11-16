@@ -11,3 +11,4 @@ Please print this page. As you come along the variables, put the values in this 
 | kube_token    |                             | 
 | cluster_name  |                             | 
   
+* Please note that names are case sensative. 
