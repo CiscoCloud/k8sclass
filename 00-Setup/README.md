@@ -36,6 +36,9 @@ export OS_IMAGE_URL=<Image URL>
 ```
 
 To get these variables you may need to log into Metacloud and look at Access & Security in your project and then check the API Access screen. 
+The tenant id can be accessed from xxxx
+The tenant name will be the same as the openstack project you are working on.
+
 
 ![api access](images/mc1.png)
 
