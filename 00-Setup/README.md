@@ -37,13 +37,12 @@ export OS_IMAGE_URL=<Image URL>
 
 To get these variables you may need to log into Metacloud and look at Access & Security in your project and then check the API Access screen. 
 
-The tenant id can be accessed from the Network >> Network >> Name of Network page in the Horizon dashboard.
-The tenant name will be the same as the openstack project you are working on.
-Be sure to replace all variables that need to be set (contained betwen "<>")
-
-
 ![api access](images/mc1.png)
 
+..* The tenant id can be accessed from the Network >> Network >> Name of Network page in the Horizon dashboard.
+..* The tenant name will be the same as the openstack project you are working on.
+..* Be sure to replace all variables that need to be set (contained betwen "<>")
+..* Syntax-wise, there should be no remaining < or  >s
 Source this file: 
 
 ```
