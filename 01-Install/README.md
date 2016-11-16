@@ -181,7 +181,7 @@ terraform apply
 ```
 If this fails then check what variables might need to be changed, or rerun the configuration again.  
 
-__NOTE:__  There may be a bug in the terraform file so if it fails to build the first time but the builds the second time you should be fine.  
+__NOTE:__  There may be a bug in the terraform file so it may fail to build the first time (messages relating to certs/ca.pem). Simply running it again should get around this. Exra credit if you can identify the bug! 
 
 It should finish cleanly.  If not, please see your instructor for help. 
 
