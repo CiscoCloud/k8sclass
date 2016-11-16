@@ -1,4 +1,4 @@
-| Variable        | Value   |
+| Variable        | Value                |
 | ------------- |:-----------------------:
 | username      |                        |
 | master_name   |                        | 
