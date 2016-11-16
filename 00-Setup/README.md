@@ -68,6 +68,8 @@ git clone https://github.com/CiscoCloud/k8sclass.git
 
 You should now have everything you need to do the first lab and install your kubernetes cluster!
 
+You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/01-Install/README.md)
+
 
 ## Appendix: Setting your own Environment
 

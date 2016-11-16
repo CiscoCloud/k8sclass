@@ -42,3 +42,8 @@ This will open a VI session.  Modify ```nodePort: XXXX``` to be ```nodePort: 308
 
 This has been previously set up on the nginx cluster to reverse proxy to this port.  Now you should be able to access your load balancer on port ```3000``` to see the grafana data. 
 
+
+## Sources
+
+[fluentd daemon set](https://gist.github.com/colemickens/68cc04a19ed834c3f038cba0959e9e40)
+
