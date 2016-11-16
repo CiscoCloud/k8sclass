@@ -2,6 +2,8 @@
 
 We want to know the state of our cluster and make sure things stay up!  In this lab we will monitor the status of our cluster. 
 
+## Performance Monitoring
+
 We will start by following the [Heapster Installation Guide](https://github.com/kubernetes/heapster/blob/master/docs/influxdb.md) with some changes due to Metacloud. 
 
 get Heapster: 
@@ -41,6 +43,9 @@ kubectl edit -n kube-system svc monitoring-grafana
 This will open a VI session.  Modify ```nodePort: XXXX``` to be ```nodePort: 30861```
 
 This has been previously set up on the nginx cluster to reverse proxy to this port.  Now you should be able to access your load balancer on port ```3000``` to see the grafana data. 
+
+## Log Monitoring
+
 
 
 ## Sources
