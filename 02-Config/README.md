@@ -123,10 +123,10 @@ We'll have to first define our static routes.
 Open up the ```generate-neutron-routes.py``` script found in the same directory as the ```metacloud.tf``` file.  There are two variables that need to be changed near the beginning of the file.  These are: 
 
 ```
-prefix = "fonzi-vworker"
+prefix = "fonzi-worker"
 net_prefix = "10.214"
 ```
-Change the prefix to match the prefix in your ```metacloud.tf``` file for the worker nodes.  
+Change the prefix to match the worker_name in your ```metacloud.tf``` file for the worker nodes.  
 
 Change the net_prefix to match the ```cluster_nets_prefix``` and ```cluster_cidr``` prefix.  
 
