@@ -41,13 +41,14 @@ Change the names to something unique for:
 *    ```lb_name```
 *    ```worker_name``` 
 
-This may be a combination of first initials that you can see, or a fun code word like ```dragon-controller``` or something.  As an example it should look something like this: 
+This should be a combination of your intiials.  Captain cloud (https://twitter.com/captaincloud_uk) completed these labs in record time, so we will commemerate him using his initialls, cc.  As an example it should look something like this: 
 
 ```
-variable lb_name { default = "fonzi-lb"}
-variable master_name { default = "fonzi-controller"}
-variable worker_name { default = "fonzi-worker" }
+variable lb_name { default = "cc-lb"}
+variable master_name { default = "cc-controller"}
+variable worker_name { default = "cc-worker" }
 ```
+
 __Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.)
 
 __Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  
