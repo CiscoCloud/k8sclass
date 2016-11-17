@@ -46,9 +46,56 @@ This has been previously set up on the nginx cluster to reverse proxy to this po
 
 ## Log Monitoring
 
+### 1.  Install Fluentd DaemonSet
 
+[fluentd](https://fluentd.io) is used for collecting container logs.  
+
+Run: 
+
+```
+kubectl apply -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/05-Monitor/fluentd-elasticsearch-v1-daemonset.yaml
+```
+
+### 2.  Install Elastisearch
 
 ## Sources
 
 [fluentd daemon set](https://gist.github.com/colemickens/68cc04a19ed834c3f038cba0959e9e40)
 
+## Troubleshooting
+
+Create busybox host to test records.  Make a yaml file called bb.yaml:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always
+```
+Now run this: 
+
+```
+kubectl apply -f bb.yaml
+```
+
+Now to log into it: 
+
+```
+kubectl exec -it busybox -- /bin/sh
+```
+That will put you on the shell to run commands. 
+
+To see all the name spaces we have: 
+```
+kubectl get svc,pods,deployments,daemonset --all-namespaces
+```
