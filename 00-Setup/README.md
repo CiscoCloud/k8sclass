@@ -23,7 +23,7 @@ You should be able to log into the openstack cluster with user name ```lab01``` 
 You can test this login at the following URL:<br>
 https://dashboard-trial5.client.metacloud.net/auth/login/
 
-Set the following in your ```~/.profile``` file: 
+Set the following in your ```~/.profile``` file. This information will be read in by the OpenStack CLI client so that it can properly connect to the OpenStack cloud.
 
 ```bash
 export OS_AUTH_URL=<Metacloud>
