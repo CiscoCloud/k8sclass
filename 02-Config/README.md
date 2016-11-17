@@ -10,7 +10,7 @@ Remember in the last lab that you named your load balancer?  What was the name? 
 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```fonzi-lb01```)
 
-```
+```bash
 export LB=<lb>
 export CLUSTER_IP=$(openstack server list | grep -i $LB \
 	 | awk -F"|" '{print $5}' | awk -F, '{print $2}' | xargs)
@@ -248,7 +248,7 @@ kubectl create -f dashboard.yaml
 
 If all went well, you should be able to see this service running: 
 
-```
+```bash
 kubectl get svc -n kube-system
 NAME                   CLUSTER-IP   EXTERNAL-IP                                 PORT(S)         AGE
 kube-dns               10.32.0.10   <none>                                      53/UDP,53/TCP   6h
