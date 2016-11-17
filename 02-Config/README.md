@@ -6,12 +6,12 @@ The previous lab just did all the set up for you to install kubernetes, but ther
 
 Our kubernetes cluster is front-ended by an nginx reverse proxy load balances that uses the 3 controllers.  
 
-Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added at ```01``` to the end of it.  So if you named your load-balancer ```fonzi-lb``` the name you need is ```fonzi-lb01```
+Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added at ```01``` to the end of it.  So if you named your load-balancer ```cc-lb``` the name you need is ```cc-lb01```
 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```fonzi-lb01```)
 
 ```bash
-export LB=<lb>
+export LB=<cc-nginx01>
 export CLUSTER_IP=$(openstack server list | grep -i $LB \
 	 | awk -F"|" '{print $5}' | awk -F, '{print $2}' | xargs)
 echo $CLUSTER_IP
@@ -34,17 +34,17 @@ ssh -i ~/<key>.pem <controller0X>
 e.g:
 
 ```
-ssh -i ~/gobears.pem fonzi-controller02
+ssh -i ~/captaincloud.pem cc-kube-controller02
 ```
 
 Once logged in see if nodes are up: 
 
 ```
-ubuntu@fonzi-controller03:~$ kubectl get nodes
+ubuntu@cc-kube-controller02:~$ kubectl get nodes
 NAME              STATUS    AGE
-fonzi-vworker01   Ready     4h
-fonzi-vworker02   Ready     4h
-fonzi-vworker03   Ready     4h
+cc-kube-worker01   Ready     4h
+cc-kube-worker02   Ready     4h
+cc-kube-worker03   Ready     4h
 ```
 
 If the nodes are up and ready you can move to the next step!
