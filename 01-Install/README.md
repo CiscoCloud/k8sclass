@@ -16,9 +16,9 @@ Because we don't want to spend all day just installing, we have made Terraform s
 ### Goals of this lab
 In this lab we will install 7 servers: 
 
-* __1 NGINX load balancer__ that we will use to access kubernetes services from the outside.  This load balancer will also be used to load balance our kubernetes master nodes. 
+* __1 NGINX load balancer__ that we will use to access kubernetes services from the outside.  This load balancer will also be used to load balance our kubernetes master nodes. It also allows us to cut down on the amount of floating IPs needed for operating these labs.
 * __3 Kubernetes master/controller nodes__  These nodes will provide high availability for cluster services. 
-* __3 Kubernetes worker nodes__ Also known as minions these nodes will be where containers run for our cluster.  
+* __3 Kubernetes worker nodes__ Also known as minions, these nodes will be where containers actually run on the cluster. 
 
 By the end of this lab, these 7 nodes will be running on OpenStack and be _mostly_ ready to run workloads.  The [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/README.md) will then finalize the configuration. 
 
@@ -41,20 +41,21 @@ Change the names to something unique for:
 *    ```lb_name```
 *    ```worker_name``` 
 
-This may be a combination of first initials that you can see, or a fun code word like ```dragon-controller``` or something.  As an example it should look something like this: 
+This should be a combination of your intiials.  Captain cloud (https://twitter.com/captaincloud_uk) completed these labs in record time, so we will commemerate him using his initialls, cc.  As an example Captain Cloud's file would contain the following: 
 
+```bash
+variable lb_name { default = "cc-lb"}
+variable master_name { default = "cc-controller"}
+variable worker_name { default = "cc-worker" }
 ```
-variable lb_name { default = "fonzi-lb"}
-variable master_name { default = "fonzi-controller"}
-variable worker_name { default = "fonzi-worker" }
-```
-__Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.)
 
-__Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  
+__Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.) <BR>
+__Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  <BR>
+__Note 3:__ Be sure not to use an underscore (_) in the names  
 
 ## OpenStack info
 
-Next you'll need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. Then we will put these values into the ```metacloud.tf``` file.  If you are running on a lab machine, you may want to open another terminal so you have one terminal to edit the ```metacloud.tf``` file and another terminal to run commands on. 
+Next you'll need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. Then we will put these values into ```metacloud.tf```.  If you are running on a lab machine, you may want to open another terminal so you have one terminal to edit the ```metacloud.tf``` file and another terminal to run commands on. 
 
 ### Network
 

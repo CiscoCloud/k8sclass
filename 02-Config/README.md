@@ -6,45 +6,45 @@ The previous lab just did all the set up for you to install kubernetes, but ther
 
 Our kubernetes cluster is front-ended by an nginx reverse proxy load balances that uses the 3 controllers.  
 
-Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added at ```01``` to the end of it.  So if you named your load-balancer ```fonzi-lb``` the name you need is ```fonzi-lb01```
+Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added at ```01``` to the end of it.  So if you named your load-balancer ```cc-lb``` the name you need is ```cc-lb01```
 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```fonzi-lb01```)
 
-```
-export LB=<lb>
+```bash
+export LB=<cc-nginx01>
 export CLUSTER_IP=$(openstack server list | grep -i $LB \
 	 | awk -F"|" '{print $5}' | awk -F, '{print $2}' | xargs)
 echo $CLUSTER_IP
 ```
 
-Make sure that last command returns an IP address.  If you have troubles run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer. 
+Make sure that last command returns an IP address.  If you have trouble, you can run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer.
 
 ### Log into load balancer
 
-```
-ssh -i ~/.ssh/<key>.pem ubuntu@<CLUSTER_IP>
+```bash
+ssh -i ~/.ssh/<key>.pem ubuntu@$CLUSTER_IP
 ```
 When you log in you should see the SSH key sitting in this directory.  Verify that your ```/etc/hosts``` file includes the names of your nodes.  
 
 Log into one of your controller nodes and check that the nodes are up: 
 
-```
+```bash
 ssh -i ~/<key>.pem <controller0X>
 ```
 e.g:
 
 ```
-ssh -i ~/gobears.pem fonzi-controller02
+ssh -i ~/captaincloud.pem cc-kube-controller02
 ```
 
 Once logged in see if nodes are up: 
 
 ```
-ubuntu@fonzi-controller03:~$ kubectl get nodes
+ubuntu@cc-kube-controller02:~$ kubectl get nodes
 NAME              STATUS    AGE
-fonzi-vworker01   Ready     4h
-fonzi-vworker02   Ready     4h
-fonzi-vworker03   Ready     4h
+cc-kube-worker01   Ready     4h
+cc-kube-worker02   Ready     4h
+cc-kube-worker03   Ready     4h
 ```
 
 If the nodes are up and ready you can move to the next step!
@@ -55,7 +55,7 @@ If the nodes are up and ready you can move to the next step!
 
 To set up ```kubectl``` so it can communicate with the cluster we will follow the instructions from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
 
-__Log off of from the controller nodes to do the following.__
+__Log off of from the controller nodes to do the following. You may also need to log off of load balancer node__
 
 ### Give Cluster a name
 Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea).  Hint:  ```grep cluster_name metacloud.tf | grep variable``` to get the name. 
@@ -67,6 +67,9 @@ export CLUSTER=<cluster_name>
 Now let's configure ```kubectl```
 
 ```
+user04@lab01:~/k8sclass/01-Install/Terraform$ pwd
+/home/user04/k8sclass/01-Install/Terraform
+
 cd certs/
 kubectl config set-cluster $CLUSTER --server='https://<CLUSTER_IP>' --certificate-authority=ca.pem --embed-certs=true
 ```
@@ -108,7 +111,7 @@ kworker03   Ready     1h
 
 [More source info](http://kubernetes.io/docs/user-guide/kubectl-cheatsheet/)
 
-Now you are set up to talk to the kubernetes cluster from your workstation!
+Now you are set up to talk to the kubernetes cluster from your lab host!
 
 ## Configure overlay networking
 
@@ -123,7 +126,7 @@ We'll have to first define our static routes.
 Open up the ```generate-neutron-routes.py``` script found in the same directory as the ```metacloud.tf``` file.  There are two variables that need to be changed near the beginning of the file.  These are: 
 
 ```
-prefix = "fonzi-worker"
+prefix = "cc-kube-worker"
 net_prefix = "10.214"
 ```
 Change the prefix to match the worker_name in your ```metacloud.tf``` file for the worker nodes.  
@@ -149,9 +152,9 @@ Once they run these commands they will let you know and you can move on!
 
 ## Kubernetes DNS
 
-From our workstation we can now run the following commands to get kubernetes DNS running on our cluster: 
+From our lab host we can now run the following commands to get kubernetes DNS running on our cluster: 
 
-```
+```bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/kubedns.yaml
 ```
 This creates a service called kube-dns.  What it will do is it will look for any pods with app name = kube-dns.  Then it will open up IP address ```10.32.0.10``` to them. You can read more about Kuberentes services [here](http://kubernetes.io/docs/user-guide/services/)
@@ -183,8 +186,8 @@ If all goes well that last command should give you output similar to:
 
 ```
 NAME                            READY     STATUS    RESTARTS   AGE       IP           NODE
-kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   fonzi-vworker01
-kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   fonzi-vworker03
+kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   cc-kube-worker01
+kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   cc-kube-worker03
 
 ```
 
@@ -248,7 +251,7 @@ kubectl create -f dashboard.yaml
 
 If all went well, you should be able to see this service running: 
 
-```
+```bash
 kubectl get svc -n kube-system
 NAME                   CLUSTER-IP   EXTERNAL-IP                                 PORT(S)         AGE
 kube-dns               10.32.0.10   <none>                                      53/UDP,53/TCP   6h

@@ -1,27 +1,29 @@
 # Environment Setup
 
-In this lab you have the option of using one of our VMs that has all of the tools necessary for you to execute the commands for this lab.  You can either use these machines or you can set up your workstation to be able to execute locally. 
+In this lab you will use an already created VM preloaded with all of the necessary tools required for the labs. Whilst operating a production cluster, it is likely you may havet the tools loaded on another machine. Follow the appendix for some details on how to setup that environment. But for the purpose of this lab, lets stick with the provided VM.
 
 ## Using the Lab Machines
 
-The instructor will give you a login to log in to the machines and all installation work can be done there. 
+The instructor will provide you with a login to the machines where all work will take place. It is recommended to print the accompanying reference.md file to fill in as you populate variables during the labs. 
 
 ```bash
 ssh <username>@<ip>
 ```
 The Password is ```Cisco.123```
 
-If you chose you can set up your own environment and run the lab from your laptop. 
 
 ## 1. Access the Cloud
 
-Once you have the prerequisites installed in the appendix below or are using the lab machine we now need to set up access to the OpenStack cloud.  
+First we need to setup access to the cloud environment. Typically this could be AWS, GCE, or OpenStack. For these labs, we will be using Cisco's OpenStack solution, Metacloud.
 
 ## 2. Setup the OpenStack environment variables
 
 You should be able to log into the openstack cluster with user name ```lab01``` and password: ```ri3Ci!Wa```
 
-Set the following in your ```~/.profile``` file: 
+You can test this login at the following URL:<br>
+https://dashboard-trial5.client.metacloud.net/auth/login/
+
+Set the following in your ```~/.profile``` file. This information will be read in by the OpenStack CLI client so that it can properly connect to the OpenStack cloud.
 
 ```bash
 export OS_AUTH_URL=<Metacloud>
@@ -39,9 +41,9 @@ To get these variables you may need to log into Metacloud and look at Access & S
 
 ![api access](images/mc1.png)
 
-  * HINT: Fo the AUTH_URL look at the Identity section in the API list 
+  * HINT: For the AUTH_URL look at the Identity section in the API list 
   * The tenant id can be accessed from the Network >> Network >> Name of Network page in the Horizon dashboard
-  * The tenant name will be the same as the openstack project you are working on
+  * The tenant name will be the same as the openstack project you are working in.
   * Be sure to replace all variables that need to be set (contained betwen "< >")
   * Syntax-wise, there should be no remaining < or  >'s
 
@@ -57,6 +59,7 @@ Test that it works:
 ```
 openstack server list
 ```
+You should see a list of virtual machines running under this tenant with corresponding information.
 
 ### Caveats for Liberty OpenStack builds
 The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
