@@ -16,9 +16,9 @@ Because we don't want to spend all day just installing, we have made Terraform s
 ### Goals of this lab
 In this lab we will install 7 servers: 
 
-* __1 NGINX load balancer__ that we will use to access kubernetes services from the outside.  This load balancer will also be used to load balance our kubernetes master nodes. 
+* __1 NGINX load balancer__ that we will use to access kubernetes services from the outside.  This load balancer will also be used to load balance our kubernetes master nodes. It also allows us to cut down on the amount of floating IPs needed for operating these labs.
 * __3 Kubernetes master/controller nodes__  These nodes will provide high availability for cluster services. 
-* __3 Kubernetes worker nodes__ Also known as minions these nodes will be where containers run for our cluster.  
+* __3 Kubernetes worker nodes__ Also known as minions, these nodes will be where containers actually run on the cluster. 
 
 By the end of this lab, these 7 nodes will be running on OpenStack and be _mostly_ ready to run workloads.  The [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/README.md) will then finalize the configuration. 
 
