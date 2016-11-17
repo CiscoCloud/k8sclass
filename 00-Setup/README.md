@@ -59,6 +59,7 @@ Test that it works:
 ```
 openstack server list
 ```
+You should see a list of virtual machines running under this tenant with corresponding information.
 
 ### Caveats for Liberty OpenStack builds
 The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
