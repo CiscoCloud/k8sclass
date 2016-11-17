@@ -152,9 +152,9 @@ Once they run these commands they will let you know and you can move on!
 
 ## Kubernetes DNS
 
-From our workstation we can now run the following commands to get kubernetes DNS running on our cluster: 
+From our lab host we can now run the following commands to get kubernetes DNS running on our cluster: 
 
-```
+```bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/kubedns.yaml
 ```
 This creates a service called kube-dns.  What it will do is it will look for any pods with app name = kube-dns.  Then it will open up IP address ```10.32.0.10``` to them. You can read more about Kuberentes services [here](http://kubernetes.io/docs/user-guide/services/)
@@ -186,8 +186,8 @@ If all goes well that last command should give you output similar to:
 
 ```
 NAME                            READY     STATUS    RESTARTS   AGE       IP           NODE
-kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   fonzi-vworker01
-kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   fonzi-vworker03
+kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   cc-kube-worker01
+kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   cc-kube-worker03
 
 ```
 
