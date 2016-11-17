@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: kibana
+        env:
+        - name: ELASTICSEARCH_URL 
+          value: "http://elasticsearch-logging:9200"
+        ports:
+        - containerPort: 5601
+          name: http
+          protocol: TCP

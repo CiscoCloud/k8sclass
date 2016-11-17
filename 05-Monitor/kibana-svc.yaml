@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: kube-system
+spec:
+  type: NodePort
+  ports:
+  - port: 5601
+    nodePort: 31709
+    targetPort: 5601
+  selector:
+    app: kibana
