@@ -20,8 +20,7 @@ First we need to setup access to the cloud environment. Typically this could be 
 
 You should be able to log into the openstack cluster with user name ```lab01``` and password: ```ri3Ci!Wa```
 
-You can test this login at the following URL:
-
+You can test this login at the following URL:<br>
 https://dashboard-trial5.client.metacloud.net/auth/login/
 
 Set the following in your ```~/.profile``` file: 
