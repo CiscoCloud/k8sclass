@@ -124,6 +124,7 @@ This method is also similar to using bare metal kubernetes where there is a simp
 We'll have to first define our static routes.  To get these static routes we have a quick script for you to run.  Run the command:
 
 ```
+cd ~/k8sclass/01-Install/Terraform/
 ./generate-neutron-routes.py
 ```
 
