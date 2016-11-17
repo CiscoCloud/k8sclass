@@ -41,9 +41,9 @@ Change the names to something unique for:
 *    ```lb_name```
 *    ```worker_name``` 
 
-This should be a combination of your intiials.  Captain cloud (https://twitter.com/captaincloud_uk) completed these labs in record time, so we will commemerate him using his initialls, cc.  As an example it should look something like this: 
+This should be a combination of your intiials.  Captain cloud (https://twitter.com/captaincloud_uk) completed these labs in record time, so we will commemerate him using his initialls, cc.  As an example Captain Cloud's file would contain the following: 
 
-```
+```bash
 variable lb_name { default = "cc-lb"}
 variable master_name { default = "cc-controller"}
 variable worker_name { default = "cc-worker" }
