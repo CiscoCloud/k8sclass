@@ -4,8 +4,8 @@ In this lab, you will become familiar with Cisco's OpenStack private cloud offer
 
 It makes use of the underlying unmodified OpenStack APIs. For the purpose of these labs, Metalcoud is just being used as a robust highly available OpenStack cloud. 
 
-More information on Metacloud can be found at (BR>
-http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html
+More information on Metacloud can be found at <BR>
+http://www.cisco.com/go/metacloud
 
 We will explore some basic functionality in OpenStack.
 
