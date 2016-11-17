@@ -5,10 +5,34 @@
 import os
 import re
 import json
+import sys
 
-prefix = "kube-worker"
-net_prefix = "10.201"
+#prefix = "kube-worker"
+#net_prefix = "10.201"
 
+# open the terraform file and get the prefix and net_prefix variables. 
+def get_worker_prefix():
+    f = open('metacloud.tf', 'r')
+    p = re.compile(r'\"([a-z-].*)\"')
+    d = re.compile(r'\"([\.\d].*)\"')
+    prefix = ""
+    net_prefix = ""
+    for line in f:
+        # line loooks like: variable worker_name { default = "kube-worker" }
+        if re.search("^variable worker_name", line):
+            #print "match: " + re.match('"(.*)"', line)
+            m =  p.search(line)
+            prefix =  m.group()
+        # line looks like: variable cluster_nets_prefix {default = "10.201" }
+        if re.search("^variable cluster_nets_prefix", line):
+            m = d.search(line)
+            net_prefix = m.group()
+            # get rid of quotes!
+            net_prefix = re.sub("\"", "", net_prefix)
+            #print net_prefix
+    f.close()
+    return prefix, net_prefix
+        
 
 # get the metadata property worker_number.  This is actually set
 # by terraform when we create the instance. 
@@ -31,6 +55,7 @@ def get_worker_number(server):
             return bar[1:-1]
     
 # find the node based on the node prefix defined in the terraform file. 
+prefix, net_prefix = get_worker_prefix()
 print "Getting all the servers..."
 p = os.popen('openstack server list -f json -c Name -c Networks --name ' + prefix + '.*',"r")
 # read the output of the command. 

@@ -65,7 +65,8 @@ We follow the guide shown in the [Kuberenetes production cluster examples](https
 Run the following commands: 
 
 ```
-kubectl 
+kubectl -f  
+```
 
 ## Sources
 
