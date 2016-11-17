@@ -56,7 +56,16 @@ Run:
 kubectl apply -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/05-Monitor/fluentd-elasticsearch-v1-daemonset.yaml
 ```
 
+This creates a [Daemon Set](http://kubernetes.io/docs/admin/daemons/) which is essentially policy that states one pod of will run on every worker node in the cluster. 
+
 ### 2.  Install Elastisearch
+
+We follow the guide shown in the [Kuberenetes production cluster examples](https://github.com/kubernetes/kubernetes/tree/master/examples/elasticsearch/production_cluster) with some modifications to make it work on our cluster. 
+
+Run the following commands: 
+
+```
+kubectl 
 
 ## Sources
 
