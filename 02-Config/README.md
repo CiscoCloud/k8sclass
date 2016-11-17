@@ -121,21 +121,12 @@ This method is also similar to using bare metal kubernetes where there is a simp
 
 (Note: For other information on this section see [this excellent blog post](http://blogs.cisco.com/cloud/deploy-a-kubernetes-cluster-on-openstack-using-ansible))
 
-We'll have to first define our static routes.  
-
-Open up the ```generate-neutron-routes.py``` script found in the same directory as the ```metacloud.tf``` file.  There are two variables that need to be changed near the beginning of the file.  These are: 
-
-```
-prefix = "cc-kube-worker"
-net_prefix = "10.214"
-```
-Change the prefix to match the worker_name in your ```metacloud.tf``` file for the worker nodes.  
-
-Change the net_prefix to match the ```cluster_nets_prefix``` and ```cluster_cidr``` prefix.  
+We'll have to first define our static routes.  To get these static routes we have a quick script for you to run.  Run the command:
 
 ```
 ./generate-neutron-routes.py
 ```
+
 This gives us output like: 
 
 ```
@@ -146,9 +137,10 @@ neutron port-update 550eabc3-df51-4586-9680-b4b3f7279bea --allowed-address-pairs
 
 These are the openstack commands that need to be run to enable the routes for your kubernetes cluster.  Since your openstack user doesn't have the ability to run these commands then you'll have to get these commands to the instructor so they can run these commands for you. 
 
-Once they run these commands they will let you know and you can move on!
+Once they run these commands they will let you know and you can move on!  Maybe now is a good time to go get some coffee while you wait?
 
-
+### Troubleshooting ```generate-nuetron-routes.py```
+Did the script not work?  So sorry to hear that!  I guess you're just never going to finish this lab.  Just kidding!  There may be a bug!  Let us know and we can help you!
 
 ## Kubernetes DNS
 
