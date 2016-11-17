@@ -4,7 +4,7 @@ In this lab you have the option of using one of our VMs that has all of the tool
 
 ## Using the Lab Machines
 
-The instructor will give you a login to log in to the machines and all installation work can be done there. 
+The instructor will give you a login to log in to the machines and all installation work can be done there. It is recommended to print the accompanying reference.md file to fill in as you populate variables during the labs. 
 
 ```bash
 ssh <username>@<ip>
