@@ -55,7 +55,7 @@ __Note 2:__ It's really important that you make these unique or you will mess up
 
 ## OpenStack info
 
-Next you'll need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. Then we will put these values into the ```metacloud.tf``` file.  If you are running on a lab machine, you may want to open another terminal so you have one terminal to edit the ```metacloud.tf``` file and another terminal to run commands on. 
+Next you'll need to gather some data as to what variables we can use for configuring our Cluster on OpenStack. Then we will put these values into ```metacloud.tf```.  If you are running on a lab machine, you may want to open another terminal so you have one terminal to edit the ```metacloud.tf``` file and another terminal to run commands on. 
 
 ### Network
 
