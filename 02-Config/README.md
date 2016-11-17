@@ -55,7 +55,7 @@ If the nodes are up and ready you can move to the next step!
 
 To set up ```kubectl``` so it can communicate with the cluster we will follow the instructions from [Kelsey Hightower's Kuberentes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-kubectl.md)
 
-__Log off of from the controller nodes to do the following.__
+__Log off of from the controller nodes to do the following. You may also need to log off of load balancer node__
 
 ### Give Cluster a name
 Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea).  Hint:  ```grep cluster_name metacloud.tf | grep variable``` to get the name. 
@@ -67,6 +67,9 @@ export CLUSTER=<cluster_name>
 Now let's configure ```kubectl```
 
 ```
+user04@lab01:~/k8sclass/01-Install/Terraform$ pwd
+/home/user04/k8sclass/01-Install/Terraform
+
 cd certs/
 kubectl config set-cluster $CLUSTER --server='https://<CLUSTER_IP>' --certificate-authority=ca.pem --embed-certs=true
 ```
@@ -108,7 +111,7 @@ kworker03   Ready     1h
 
 [More source info](http://kubernetes.io/docs/user-guide/kubectl-cheatsheet/)
 
-Now you are set up to talk to the kubernetes cluster from your workstation!
+Now you are set up to talk to the kubernetes cluster from your lab host!
 
 ## Configure overlay networking
 
@@ -123,7 +126,7 @@ We'll have to first define our static routes.
 Open up the ```generate-neutron-routes.py``` script found in the same directory as the ```metacloud.tf``` file.  There are two variables that need to be changed near the beginning of the file.  These are: 
 
 ```
-prefix = "fonzi-worker"
+prefix = "cc-kube-worker"
 net_prefix = "10.214"
 ```
 Change the prefix to match the worker_name in your ```metacloud.tf``` file for the worker nodes.  
