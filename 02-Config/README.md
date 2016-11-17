@@ -17,7 +17,7 @@ export CLUSTER_IP=$(openstack server list | grep -i $LB \
 echo $CLUSTER_IP
 ```
 
-Make sure that last command returns an IP address.  If you have troubles run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer. 
+Make sure that last command returns an IP address.  If you have trouble, you can run the ```openstack server list``` command and look for the floating IP address assigned to your load balancer.
 
 ### Log into load balancer
 
