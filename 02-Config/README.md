@@ -22,7 +22,7 @@ Make sure that last command returns an IP address.  If you have trouble, you can
 ### Log into load balancer
 
 ```bash
-ssh -i ~/.ssh/<key>.pem ubuntu@<CLUSTER_IP>
+ssh -i ~/.ssh/<key>.pem ubuntu@$CLUSTER_IP
 ```
 When you log in you should see the SSH key sitting in this directory.  Verify that your ```/etc/hosts``` file includes the names of your nodes.  
 
