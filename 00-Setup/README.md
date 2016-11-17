@@ -1,25 +1,26 @@
 # Environment Setup
 
-In this lab you have the option of using one of our VMs that has all of the tools necessary for you to execute the commands for this lab.  You can either use these machines or you can set up your workstation to be able to execute locally. 
+In this lab you will use an already created VM preloaded with all of the necessary tools required for the labs. Whilst operating a production cluster, it is likely you may havet the tools loaded on another machine. Follow the appendix for some details on how to setup that environment. But for the purpose of this lab, lets stick with the provided VM.
 
 ## Using the Lab Machines
 
-The instructor will give you a login to log in to the machines and all installation work can be done there. It is recommended to print the accompanying reference.md file to fill in as you populate variables during the labs. 
+The instructor will provide you with a login to the machines where all work will take place. It is recommended to print the accompanying reference.md file to fill in as you populate variables during the labs. 
 
 ```bash
 ssh <username>@<ip>
 ```
 The Password is ```Cisco.123```
 
-If you chose you can set up your own environment and run the lab from your laptop. 
 
 ## 1. Access the Cloud
 
-Once you have the prerequisites installed in the appendix below or are using the lab machine we now need to set up access to the OpenStack cloud.  
+First we need to setup access to the cloud environment. Typically this could be AWS, GCE, or OpenStack. For these labs, we will be using Cisco's OpenStack solution, Metacloud.
 
 ## 2. Setup the OpenStack environment variables
 
 You should be able to log into the openstack cluster with user name ```lab01``` and password: ```ri3Ci!Wa```
+You can test this login at the following URL:
+https://dashboard-trial5.client.metacloud.net/auth/login/
 
 Set the following in your ```~/.profile``` file: 
 
