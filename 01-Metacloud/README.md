@@ -17,6 +17,17 @@ Login as: lab01 / password
 You should see the following:
 ![metacloudDashboard](images/mcDashboard.png)
 
+Click LAUNCH INSTANCE
+ * Provide a unique instance name (cc_mytestinstance). Using your intiials can help ensure you have a unique name in the class.
+ * Select the <b> m1.small </b> flavor
+ * Set instance count to 1
+ * Change Instance Boot Source to <b> Boot from image </b>
+ * Set Image Name to: <b>CirrOS 0.3.4</b>
+ * Notice the project limit and flavor details to the right side
+ * Click <b> Launch </b>
+ 
+
+
 Additionally, there are much more robust ways to install kubernetes.  Many popular installers are out there today including:
 
 *  [kops](https://github.com/kubernetes/kops) 
