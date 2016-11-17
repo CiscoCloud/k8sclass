@@ -1,6 +1,21 @@
-# 1. Installing Kubernetes
+# 1. Metacloud Introduction
 
-In this lab we will be installing Kubernetes on OpenStack.  Many of these steps could be on bare metal, VMware, or GCE and AWS.  
+In this lab, you will become familiar with Cisco's OpenStack private cloud offering, Metacloud.  Metacloud is a private cloud offering based on OpenStack that comes with a 99.99% SLA across the entire stack.
+
+It makes use of the underlying unmodified OpenStack APIs. For the purpose of these labs, Metalcoud is just being used as a robust highly available OpenStack cloud. 
+
+More information on Metacloud can be found at (BR>
+http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html
+
+We will explore some basic functionality in OpenStack.
+
+## 1. Login to Metacloud environment
+Point your browser towards https://dashboard-trial5.client.metacloud.net/auth/login/ or an alternate location if specified by the instrcuctor
+
+Login as: lab01 / password
+
+You should see the following:
+![metacloudDashboard](images/mcDashboard.png)
 
 Additionally, there are much more robust ways to install kubernetes.  Many popular installers are out there today including:
 
