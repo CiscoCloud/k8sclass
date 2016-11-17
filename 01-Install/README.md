@@ -20,7 +20,12 @@ In this lab we will install 7 servers:
 * __3 Kubernetes master/controller nodes__  These nodes will provide high availability for cluster services. 
 * __3 Kubernetes worker nodes__ Also known as minions, these nodes will be where containers actually run on the cluster. 
 
-By the end of this lab, these 7 nodes will be running on OpenStack and be _mostly_ ready to run workloads.  The [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/README.md) will then finalize the configuration. 
+By the end of this lab, these 7 nodes will be running on OpenStack and be _mostly_ ready to run workloads.  The [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/README.md) will then finalize the configuration. The diagram below shows what the resulting setup will look like. Each box represents a virtual machine. Notice that the user communicates through the load balancer. This allows us to minimize the number of public IPs used in this lab.
+
+![labSetup](images/k8sclass-setup.png)
+
+
+
 
 ## 1.  Find the Terraform Directory
 
