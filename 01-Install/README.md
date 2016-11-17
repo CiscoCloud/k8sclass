@@ -49,8 +49,8 @@ variable master_name { default = "cc-controller"}
 variable worker_name { default = "cc-worker" }
 ```
 
-__Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.)
-__Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  
+__Note 1:__ these variable definitions are not consecutive in the file and are only defined once near the top.) <BR>
+__Note 2:__ It's really important that you make these unique or you will mess up several parts of the lab.  <BR>
 __Note 3:__ Be sure not to use an underscore (_) in the names  
 
 ## OpenStack info
