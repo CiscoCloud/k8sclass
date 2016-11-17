@@ -211,7 +211,7 @@ resource "null_resource" "lbhosts" {
 
 # Get nginx working for the load balancer. 
 resource "null_resource" "lb2" {
-  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.lbhosts"]
+  depends_on = ["openstack_compute_instance_v2.lb", "data.template_file.nginx", "null_resource.lbhosts", "null_resource.certs"]
 
   count = "${var.lb_count}"
   connection {
