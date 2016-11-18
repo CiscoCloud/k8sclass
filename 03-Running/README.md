@@ -28,6 +28,11 @@ Here are just some ways to interact with Kubernetes:
 
 A preferred way involves maintaining yaml/json files in a repository and then neasily pushing those files to Kubernetes. This avoids typos and allows for great details tracking versions of files which can be useful to rollback or debug the application.
 
+Additional notes:
+- discuss namespaces?
+- create some fun labels?
+- upgrade a component of the app?
+
 
 
 
