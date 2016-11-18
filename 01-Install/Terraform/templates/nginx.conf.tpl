@@ -74,4 +74,18 @@ http {
                         proxy_pass http://kibana;
                 }
         }
+        # guestbook service
+        upstream guestbook {
+                server ${worker1}:31433;
+                server ${worker2}:31433;
+        }
+
+
+        server {
+                listen 8888;
+                server_name _;
+                location / {
+                        proxy_pass http://guestbook;
+                }
+        }
 }
