@@ -4,7 +4,7 @@
 You will be familiar of basic operations with Kubernetes including deploying applications, scaling them, upgrading, etc.
 
 We will use a common guestbook application. The architecture in the end will look like the following:<BR>
-![guestbookPods](images/guestbookPods.png =250x)
+![guestbookPods](images/guestbookPods.png =600y)
 
 This is an ideal application as it contains various components including:
  * a single node deployment
