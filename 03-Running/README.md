@@ -12,6 +12,7 @@ This is an ideal application as it contains various components including:
  * a multi-node deployment
  * a replication controller to ensure some components continue to run
  * a web front-end and backend DB
+ * changeme
 
 
 #### Check status of environment
