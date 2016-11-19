@@ -74,7 +74,7 @@ Review the diagram at the begining of this lab
 
  The frontend will be accessible by anyone on the Internet. The frontend then interacts with the redis-master via javascript redis API calls. 
  
- #### Redis-master Deployment 
+#### Redis-master Deployment 
  
 The frontend will be communicating with the redis-master to store and retrieve data.
  
@@ -203,13 +203,92 @@ Events:
   3m		3m		1	{kubelet cc-kube-worker02}	spec.containers{master}	Normal		Started		Started container with docker id 44266106b1f0
 ```
 
+If you would like to examine the logs for this container, you can do the following:
+
+```yaml
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+NAME                            READY     STATUS    RESTARTS   AGE
+redis-master-2696761081-luk0y   1/1       Running   0          22m
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl logs redis-master-2696761081-luk0y 
+CONTENTS OF LOG
+```
+
+As it stands, redis-master has been deployed to a single pod which contains an IP. If there is an issue with this pod, the replication controller will ensure that it spins up again. However, it could now spin up in a different pod or even on a different host. This will result in a new IP address. Because we will have other components talking to this, we can create a service so that other components can reach this service via its service name. This ensures that we always have a way to talk to it.
+
+We already have a redis-master-service.yaml for you
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    role: master
+    tier: backend
+    exercise: lab3
+spec:
+  ports:
+    # the port that this service should serve on
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: master
+    tier: backend
+```
+
+Note this service file is pretty simple. Its kind is a service with a name of <b>redis-master.</b>
+
+Create this service using the command below (similar to how we created the deployment)
+
+```bash
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-master-service.yaml 
+service "redis-master" created
+```
 
 
 
- 
+#### Redis-slave Deployment 
 
+Since we are building a cloudy guestbook, we want to do everything we can do to ensure that our application is resilient across various failures. For this reason, we will create a redis-slave deployment. The data in the redis-master will be synced to the data in the redis-slave deployment.
 
+Similar to the redis-master deployment, we alreadty have a deployment file for the redis-slave.
 
+Examine redis-slave.yaml closely.
+
+Hopefully you noticed a few things:
+ * There is a service defined at the top of the file called <b>redis-slave</b>
+ * There is also a deployment defined beneath this service
+ * Replicas is set to 2 for this. This will ensure that there are always 2 redis-slaves running. 
+ * I need to find out why their isn't a replicaset defined here... is it implied?
+
+You are almost a pro at this, go ahead and create the redis-slave service as shown below:
+
+```bash
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-slave.yaml 
+service "redis-slave" created
+deployment "redis-slave" created
+```
+
+Notice how both a service and deployment were both created for us!
+
+Now lets see what pods are running.
+
+```bash
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+NAME                            READY     STATUS    RESTARTS   AGE
+redis-master-2696761081-luk0y   1/1       Running   0          53m
+redis-slave-798518109-0o6vc     1/1       Running   0          9m
+redis-slave-798518109-q0gjd     1/1       Running   0          9m
+```
+
+---
+SANITY CHECK: Why doesn't the redis-master show up when I run kubectl get svc -l exercise
+my labels don't seem to work :(
+---
+
+continue with frontend nginx
 
 
 

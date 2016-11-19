@@ -6,6 +6,7 @@ metadata:
     app: redis
     role: master
     tier: backend
+    exercise: lab3
 spec:
   ports:
     # the port that this service should serve on
