@@ -129,9 +129,82 @@ Examining this deployment file we notice a few things:
  * There are various labels set.
  * In the container section, it lists the source for the redis image as well as some requests for resources <b>(do we mention this in the presentation)?</b>
 
- cd into the lab3 directory and run the following command to create this deployment in your cluster:
- ```
+cd into the lab3 guestbook directory and run the following command to create this deployment in your cluster:
+
+```bash
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
+deployment "redis-master" created
+```
+ We can confirm our redis-master was deployed successfully by running some additional commands:
  
+```bash
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get deployments
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+redis-master   1         1         1            1           1m
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get replicasets
+NAME                      DESIRED   CURRENT   READY     AGE
+redis-master-2696761081   1         1         1         1m
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+NAME                            READY     STATUS    RESTARTS   AGE
+redis-master-2696761081-luk0y   1/1       Running   0          1m
+```
+
+Notice the naming of the deployment, replicaset, and pod. The pod name is the most detailed. By adding this single YAML file we created a deployment which consisted of a replicatset with a single pod.
+
+You can describe this pod to see additional details after it has been deployed.
+
+```yaml
+user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl describe pods redis-master-2696761081-luk0y
+Name:		redis-master-2696761081-luk0y
+Namespace:	default
+Node:		cc-kube-worker02/192.168.7.204
+Start Time:	Sat, 19 Nov 2016 01:30:50 +0000
+Labels:		app=redis
+		exercise=lab3
+		pod-template-hash=2696761081
+		role=master
+		tier=backend
+Status:		Running
+IP:		10.234.1.3
+Controllers:	ReplicaSet/redis-master-2696761081
+Containers:
+  master:
+    Container ID:	docker://44266106b1f0202cb037a47a77d6bf6380da3b8ecf3b4f18e5062f56c3201204
+    Image:		gcr.io/google_containers/redis:e2e
+    Image ID:		docker://sha256:e5e67996c442f903cda78dd983ea6e94bb4e542950fd2eba666b44cbd303df42
+    Port:		6379/TCP
+    Requests:
+      cpu:		100m
+      memory:		100Mi
+    State:		Running
+      Started:		Sat, 19 Nov 2016 01:30:51 +0000
+    Ready:		True
+    Restart Count:	0
+    Volume Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-iuhf7 (ro)
+    Environment Variables:	<none>
+Conditions:
+  Type		Status
+  Initialized 	True 
+  Ready 	True 
+  PodScheduled 	True 
+Volumes:
+  default-token-iuhf7:
+    Type:	Secret (a volume populated by a Secret)
+    SecretName:	default-token-iuhf7
+QoS Class:	Burstable
+Tolerations:	<none>
+Events:
+  FirstSeen	LastSeen	Count	From				SubobjectPath		Type		Reason		Message
+  ---------	--------	-----	----				-------------		--------	------		-------
+  3m		3m		1	{default-scheduler }				Normal		Scheduled	Successfully assigned redis-master-2696761081-luk0y to cc-kube-worker02
+  3m		3m		1	{kubelet cc-kube-worker02}	spec.containers{master}	Normal		Pulled		Container image "gcr.io/google_containers/redis:e2e" already present on machine
+  3m		3m		1	{kubelet cc-kube-worker02}	spec.containers{master}	Normal		Created		Created container with docker id 44266106b1f0; Security:[seccomp=unconfined]
+  3m		3m		1	{kubelet cc-kube-worker02}	spec.containers{master}	Normal		Started		Started container with docker id 44266106b1f0
+```
+
+
+
 
  
 
