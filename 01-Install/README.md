@@ -66,14 +66,14 @@ Next you'll need to gather some data as to what variables we can use for configu
 
 You'll need to know which network your cluster will be deployed on.  Ask the instructor if they haven't told you already (or ask again if you weren't paying attention), or go dangerous and try to find it yourself: 
 
-```
+```bash
 openstack network list
 ```
 
 From the list of networks make note of which one is used for your environment.  It will be the same network that the lab machine is on. This should then be updated in the ```metacloud.tf``` file in this repository. 
 
 e.g. if my network was named "twenty", I would update the file to be:
-```
+```bash
 variable network { default = "twenty" } 
 ```
 
@@ -88,7 +88,7 @@ __Note:__ You may not need to change some of these values as they may already be
 
 We'll need to know which image to use.  In this lab we are looking to use ```Ubuntu 16.04```.  You should be able to find the image corresponding to this OS by running: 
 
-```
+```bash
 openstack image list
 ```
 Update the ```metacloud.tf``` file to include this image.  e.g.:
@@ -157,10 +157,7 @@ variable cluster_name { default = "mykubernetes" }
 ```
 #### cluster_cidr
 Create a ```/16``` unique network.  The instructor will assign this but it may be something like: 
-```
-10.<group#>.0.0/16
-```
-e.g: ```10.214.0.0/16```
+```10.200+<group#>.0.0/16``` For example, if your group was 8, your network may be something like ```10.208.0.0/16```.
 
 #### cluster_nets_prefix
 
@@ -181,7 +178,7 @@ Leave this as defined.
 
 We will now build the cluster by running: 
 
-```
+```bash
 terraform plan
 terraform apply
 ```

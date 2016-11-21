@@ -57,11 +57,11 @@ variable cluster_domain {default = "cluster.local" } # the internal Kube cluster
 # to resolve this IP range. 
 
 # first what is the default overarching subnet?  
-variable cluster_cidr {default = "10.201.0.0/16" }
+variable cluster_cidr {default = "10.214.0.0/16" }
 
 # second: we will make individual ranges for each node.  What will it start with? 
 # right now only /24 is supported.  This prefix should match the cluster_cidr defined above. 
-variable cluster_nets_prefix {default = "10.201" }
+variable cluster_nets_prefix {default = "10.214" }
 variable cluster_nets_suffix {default = "0\\/24" }
 
 # the interface device is the device your VM was/will be configured with by openstack.  Was it ens3? eth0? 

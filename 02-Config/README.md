@@ -39,7 +39,7 @@ ssh -i ~/captaincloud.pem cc-kube-controller02
 
 Once logged in see if nodes are up: 
 
-```
+```bash
 ubuntu@cc-kube-controller02:~$ kubectl get nodes
 NAME              STATUS    AGE
 cc-kube-worker01   Ready     4h
@@ -61,12 +61,12 @@ __Log off of from the controller nodes to do the following. You may also need to
 Name your cluster something fun.  You'll have to look in your ```metacloud.tf``` file and try to match this.  (It doesn't have to, but its a good idea).  Hint:  ```grep cluster_name metacloud.tf | grep variable``` to get the name. 
 
 
-```
+```bash
 export CLUSTER=<cluster_name>
 ```
 Now let's configure ```kubectl```
 
-```
+```bash
 user04@lab01:~/k8sclass/01-Install/Terraform$ pwd
 /home/user04/k8sclass/01-Install/Terraform
 
@@ -92,7 +92,7 @@ kubectl config use-context default-context
 
 You should be able to connect from your local machine to the kubernetes cluster through the nginx load balancer:
 
-```
+```bash
 kubectl get componentstatuses
 NAME                 STATUS    MESSAGE              ERROR
 controller-manager   Healthy   ok                   
@@ -100,8 +100,6 @@ scheduler            Healthy   ok
 etcd-0               Healthy   {"health": "true"}   
 etcd-2               Healthy   {"health": "true"}   
 etcd-1               Healthy   {"health": "true"}
-```
-```
 kubectl get nodes
 NAME        STATUS    AGE
 kworker01   Ready     1h
@@ -123,14 +121,14 @@ This method is also similar to using bare metal kubernetes where there is a simp
 
 We'll have to first define our static routes.  To get these static routes we have a quick script for you to run.  Run the command:
 
-```
+```bash
 cd ~/k8sclass/01-Install/Terraform/
 ./generate-neutron-routes.py
 ```
 
 This gives us output like: 
 
-```
+```bash
 neutron port-update 3325e20d-29b0-4da7-ac2f-5ad54ab390f3 --allowed-address-pairs type=dict list=true ip_address=10.214.0.0/24
 neutron port-update 9958fc43-075d-4577-9374-467c21c19371 --allowed-address-pairs type=dict list=true ip_address=10.214.1.0/24
 neutron port-update 550eabc3-df51-4586-9680-b4b3f7279bea --allowed-address-pairs type=dict list=true ip_address=10.214.2.0/24
@@ -147,14 +145,14 @@ Did the script not work?  So sorry to hear that!  I guess you're just never goin
 
 From our lab host we can now run the following commands to get kubernetes DNS running on our cluster: 
 
-```bash
+```bash bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/kubedns.yaml
 ```
 This creates a service called kube-dns.  What it will do is it will look for any pods with app name = kube-dns.  Then it will open up IP address ```10.32.0.10``` to them. You can read more about Kuberentes services [here](http://kubernetes.io/docs/user-guide/services/)
 
 Now you can run the command: 
 
-```
+```bash
 kubectl --namespace=kube-system get svc
 ```
 
@@ -162,7 +160,7 @@ Next we will create the DNS deployment.  This is where we will actually build se
 
 Run the command: 
 
-```
+```bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/deployments/kubedns.yaml
 ```
 
@@ -170,14 +168,14 @@ Kuberentes reads the file and deploys containers based on what it says to do.  Y
 
 Check that services are up
 
-```
+```bash
 kubectl --namespace=kube-system get deployments
 kubectl --namespace=kube-system get svc
 kubectl --namespace=kube-system get pods -o wide
 ```
 If all goes well that last command should give you output similar to: 
 
-```
+```bash
 NAME                            READY     STATUS    RESTARTS   AGE       IP           NODE
 kube-dns-v20-1485703853-7y7o6   3/3       Running   0          50s       10.214.0.2   cc-kube-worker01
 kube-dns-v20-1485703853-j6dh7   3/3       Running   0          50s       10.214.2.2   cc-kube-worker03
@@ -191,12 +189,12 @@ Hurray!  Now kubedns is up!
 
 First we will install the dashboard as a basic deployment (e.g: Pods): 
 
-```
+```bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/deployments/kubernetes-dashboard.yaml
 ```
 Make sure its up:
 
-```
+```bash
 $ kubectl get pods -n kube-system
 NAME                                    READY     STATUS    RESTARTS   AGE
 kube-dns-v20-1485703853-oc6hj           3/3       Running   0          3m
@@ -208,7 +206,7 @@ Now, how can we access this dashboard externally?  By default, these services ar
 
 Download a template file running: 
 
-```
+```bash
 wget https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/dashboard.yaml
 ```
 
