@@ -1,6 +1,6 @@
 # Running Kubernetes
 
-### Goals of this lab
+### Goals of this lab04-Running
 You will be familiar of basic operations with Kubernetes including deploying applications, scaling them, upgrading, etc.
 
 We will use a common guestbook application. The architecture in the end will look like the following:<BR>
@@ -125,19 +125,19 @@ Examining this deployment file we notice a few things:
 cd into the lab3 guestbook directory and run the following command to create this deployment in your cluster:
 
 ```bash
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
 deployment "redis-master" created
 ```
  We can confirm our redis-master was deployed successfully by running some additional commands:
  
 ```bash
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get deployments
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployments
 NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 redis-master   1         1         1            1           1m
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get replicasets
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get replicasets
 NAME                      DESIRED   CURRENT   READY     AGE
 redis-master-2696761081   1         1         1         1m
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
 NAME                            READY     STATUS    RESTARTS   AGE
 redis-master-2696761081-luk0y   1/1       Running   0          1m
 ```
@@ -147,7 +147,7 @@ Notice the naming of the deployment, replicaset, and pod. The pod name is the mo
 You can describe this pod to see additional details after it has been deployed.
 
 ```yaml
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl describe pods redis-master-2696761081-luk0y
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl describe pods redis-master-2696761081-luk0y
 Name:		redis-master-2696761081-luk0y
 Namespace:	default
 Node:		cc-kube-worker02/192.168.7.204
@@ -199,10 +199,10 @@ Events:
 If you would like to examine the logs for this container, you can do the following:
 
 ```yaml
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
 NAME                            READY     STATUS    RESTARTS   AGE
 redis-master-2696761081-luk0y   1/1       Running   0          22m
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl logs redis-master-2696761081-luk0y 
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl logs redis-master-2696761081-luk0y 
 CONTENTS OF LOG
 ```
 
@@ -236,7 +236,7 @@ Note this service file is pretty simple. Its kind is a service with a name of <b
 Create this service using the command below (similar to how we created the deployment)
 
 ```bash
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-master-service.yaml 
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-service.yaml 
 service "redis-master" created
 ```
 
@@ -259,7 +259,7 @@ Hopefully you noticed a few things:
 You are almost a pro at this, go ahead and create the redis-slave service as shown below:
 
 ```bash
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl create -f redis-slave.yaml 
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-slave.yaml 
 service "redis-slave" created
 deployment "redis-slave" created
 ```
@@ -269,7 +269,7 @@ Notice how both a service and deployment were both created for us!
 Now lets see what pods are running.
 
 ```bash
-user04@lab01:~/k8sclass/03-Running/guestbook$ kubectl get pods
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
 NAME                            READY     STATUS    RESTARTS   AGE
 redis-master-2696761081-luk0y   1/1       Running   0          53m
 redis-slave-798518109-0o6vc     1/1       Running   0          9m
