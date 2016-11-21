@@ -1,4 +1,4 @@
-# Running Kubernetes
+# 3. Running Kubernetes
 
 ### Goals of this lab04-Running
 You will be familiar of basic operations with Kubernetes including deploying applications, scaling them, upgrading, etc.
