@@ -1,4 +1,4 @@
-# 1. Installing Kubernetes
+# 2. Installing Kubernetes
 
 In this lab we will be installing Kubernetes on OpenStack.  Many of these steps could be on bare metal, VMware, or GCE and AWS.  
 
