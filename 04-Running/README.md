@@ -281,7 +281,7 @@ SANITY CHECK: Why doesn't the redis-master show up when I run kubectl get svc -l
 my labels don't seem to work :(
 ---
 
-#### Redis-master Deployment 
+#### Frontend Deployment 
 
 For this guestbook example, we will use a simple PHP server that is configured to talk to redis-master or redis-slave depending if the action if a read or write. We will deploy 3 nginx web server pods in this environment using the provided ```frontend.yaml```. 
 
@@ -289,21 +289,21 @@ Configure the frontend as shown below:
 
 ```bash
 user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f frontend.yaml 
-service "frontend" created
 deployment "frontend" created
 ```
 
 Confirm that all componenta are up by listing the deployments and replicasets:
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployments,rs
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployment,rs
 NAME                  DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-deploy/frontend       3         3         3            3           1m
+deploy/frontend       3         3         3            3           51s
 deploy/redis-master   1         1         1            1           2d
 deploy/redis-slave    2         2         2            2           2d
 NAME                         DESIRED   CURRENT   READY     AGE
-rs/frontend-88237173         3         3         3         1m
+rs/frontend-88237173         3         3         3         51s
 rs/redis-master-2696761081   1         1         1         2d
 rs/redis-slave-798518109     2         2         2         2d
+
 ```
 
 If you have noticed, we have been labeling the various components. Examine the pods based on the tier label we have applied:
@@ -311,14 +311,88 @@ If you have noticed, we have been labeling the various components. Examine the p
 ```bash
 user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods -L tier
 NAME                            READY     STATUS    RESTARTS   AGE       TIER
-frontend-88237173-1wgst         1/1       Running   0          3m        frontend
-frontend-88237173-iiq50         1/1       Running   0          3m        frontend
-frontend-88237173-xswa6         1/1       Running   0          3m        frontend
+frontend-88237173-e1e18         1/1       Running   0          1m        frontend
+frontend-88237173-hxphs         1/1       Running   0          1m        frontend
+frontend-88237173-odz12         1/1       Running   0          1m        frontend
 redis-master-2696761081-luk0y   1/1       Running   0          2d        backend
 redis-slave-798518109-0o6vc     1/1       Running   0          2d        backend
 redis-slave-798518109-q0gjd     1/1       Running   0          2d        backend
 ```
-These pods should reflect the diagram of the deployment at the begining of this lab. 
+These pods should reflect the diagram of the deployment at the begining of this lab.
+
+You may have also noticed that there is no service for the frontend component. A service will be needed in order to access our guetbook.
+
+You can expose the service via the command line by issuing the command ```kubectl expose deployment frontend --port=80 --type=NodePort```
+
+Depending on the environment Kubernetes is running in, there are a number of ways to expose your applications. With some public cloud providers (e.g. Google), you can use a LoadBalancer instead of a NodePort. In this lab, we will expose the service via NodePort and then reconfigure our nginx web server to redirect traffic to this service. 
+
+You just exposed the frontend deployment as a service of type NodePort. To see what port Kubernetes assigned it you can run the command below or check the dashboard under services >> frontend.
+
+```bash
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl describe service frontend
+Name:			frontend
+Namespace:		default
+Labels:			app=guestbook
+			tier=frontend
+Selector:		app=guestbook,tier=frontend
+Type:			NodePort
+IP:			10.32.0.53
+Port:			<unset>	80/TCP
+NodePort:		<unset>	31245/TCP
+Endpoints:		10.234.0.4:80,10.234.1.5:80,10.234.2.3:80
+Session Affinity:	None
+```
+
+<img src="images/exposeNodePort.png">
+
+In this example, the NodePort is 31245. This means if you access the workers on this port, you should be able to access this service. 
+However, in this lab environment, the only node accessible from the Internet is the VM with the public IP assigned to it (the nginX load balanceR). 
+Make node of the port in your reference printout.
+
+#### Configure Load Balancer
+
+The frontend guestbook service has now been exposed. In order to access it on port 31245 you will need to do a slight modification to your load balancer.
+
+SSH into the load balancer using your key and public IP address: ```ssh -i ~/.ssh<yourkeyname.pem> ubuntu@<LB_IP>```
+
+Next, change to root and open the nginx conig file.
+
+```bash
+ubuntu@cc-nginx01:~$ sudo su -
+root@cc-nginx01:~# vi /etc/nginx/nginx.conf 
+```
+
+Towards the bottom of the file, you will see the configuratioin on the frontend:
+
+```yaml
+        # guestbook service
+        upstream guestbook {
+                server 192.168.7.205:31245;
+                server 192.168.7.204:31245;
+        }
+
+
+        server {
+                listen 8888;
+                server_name _;
+                location / {
+                        proxy_pass http://guestbook;
+                }
+        }
+```
+
+In the upstream section, change the server ports from 31245 to your NodePort (see reference sheet). Notice the frontend is already mapped to 8888.
+
+Finally, restart nginx for changes to take effect using the command ``` service nginx restart```
+
+Open a browser to access your guestbook at the URL: http://<LB_IP>:8888
+
+<img src="images/guestbookRunning.png">
+
+
+
+
+
 
 
 
