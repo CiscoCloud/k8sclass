@@ -11,5 +11,6 @@ Please print this page. As you come along the variables, put the values in this 
 | kube_token    |                             | 
 | cluster_name  |                             | 
 | IP Range      |  10.                        | 
+| NodePort      |                             | 
   
 * Please note that names are case sensative. 
