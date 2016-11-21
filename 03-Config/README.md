@@ -1,4 +1,4 @@
-# 2. Configure Kubernetes
+# 3. Configure Kubernetes
 
 The previous lab just did all the set up for you to install kubernetes, but there is still some steps we need to complete!
 
