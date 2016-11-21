@@ -51,14 +51,14 @@ Here are just some ways to interact with Kubernetes:
 
 ---- 
 GIVE CREDIT TO GUESTBOOK K8S example!!
-----
+---
 
 A preferred way involves maintaining yaml/json files in a repository and then easily pushing those files to Kubernetes. This avoids typos and allows for great detail tracking versions of files which can be 
 useful to rollback or debug an application.
 
-As such there are a few different ways we could deploy the guestbook application. For example, we could deploy the entire guestbook application including fronend servers, redis master and slaves by deploying a single YAML file! We don't it that easy do we? For this reason, we will deploy each component and walk through it seperately. 
+As such there are a few different ways we could deploy the guestbook application. For example, we could deploy the entire guestbook application including fronend servers, redis master and slaves by deploying a single YAML file! We don't  want to let you off that easy though. For this reason, we will deploy each component and walk through it seperately. 
 
-This guestbook is nice as it has many components. Discuss this in some more detail...
+This guestbook is nice as it has many components.
 Review the diagram at the begining of this lab
 
  * frontend: a multi-pod deployment with a service in front. This is a nginx web server to access the guestbook.
