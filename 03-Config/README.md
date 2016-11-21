@@ -145,7 +145,7 @@ Did the script not work?  So sorry to hear that!  I guess you're just never goin
 
 From our lab host we can now run the following commands to get kubernetes DNS running on our cluster: 
 
-```bash bash
+```bash
 kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/02-Config/services/kubedns.yaml
 ```
 This creates a service called kube-dns.  What it will do is it will look for any pods with app name = kube-dns.  Then it will open up IP address ```10.32.0.10``` to them. You can read more about Kuberentes services [here](http://kubernetes.io/docs/user-guide/services/)
