@@ -281,7 +281,31 @@ SANITY CHECK: Why doesn't the redis-master show up when I run kubectl get svc -l
 my labels don't seem to work :(
 ---
 
-continue with frontend nginx
+#### Redis-master Deployment 
+
+For this guestbook example, we will use a simple PHP server that is configured to talk to redis-master or redis-slave depending if the action if a read or write. We will deploy 3 nginx web server pods in this environment using the provided ```frontend.yaml```. 
+
+Configure the frontend as shown below:
+
+```bash
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f frontend.yaml 
+service "frontend" created
+deployment "frontend" created
+```
+
+Confirm that all componenta are up by listing the deployments and replicasets:
+```bash
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployments,rs
+NAME                  DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deploy/frontend       3         3         3            3           1m
+deploy/redis-master   1         1         1            1           2d
+deploy/redis-slave    2         2         2            2           2d
+NAME                         DESIRED   CURRENT   READY     AGE
+rs/frontend-88237173         3         3         3         1m
+rs/redis-master-2696761081   1         1         1         2d
+rs/redis-slave-798518109     2         2         2         2d
+```
+
 
 
 

@@ -5,6 +5,7 @@ metadata:
   labels:
     app: guestbook
     tier: frontend
+    exercise: lab04
 spec:
   # if your cluster supports it, uncomment the following to automatically create
   # an external load-balanced IP for the frontend service.
@@ -40,6 +41,7 @@ spec:
       labels:
         app: guestbook
         tier: frontend
+        exerise: lab04
     spec:
       containers:
       - name: php-redis

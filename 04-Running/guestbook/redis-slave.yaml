@@ -6,7 +6,7 @@ metadata:
     app: redis
     role: slave
     tier: backend
-    exercise: lab3
+    exercise: lab04
 spec:
   ports:
     # the port that this service should serve on
@@ -43,7 +43,7 @@ spec:
         app: redis
         role: slave
         tier: backend
-        exercise: lab3
+        exercise: lab04
     spec:
       containers:
       - name: slave
