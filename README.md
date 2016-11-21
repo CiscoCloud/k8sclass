@@ -14,6 +14,8 @@ Additionally, hands-on labs will provide real world experience with Kubernetes.
 
 __DISCLAIMER__ Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack offering named [Metacloud](http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html). 
 
+It is recommended to first print the [Reference](/reference.md) page. This way you can record some variables you set for later use in the labs. 
+
 ## Labs
 
 * [Environment Setup](00-Setup/README.md) - This lab covers setting up your workstation or logging into our lab machines to get started.  
