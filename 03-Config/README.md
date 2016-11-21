@@ -68,7 +68,7 @@ Now let's configure ```kubectl```
 
 ```bash
 user04@lab01:~/k8sclass/02-Install/Terraform$ pwd
-/home/user04/k8sclass/01-Install/Terraform
+/home/user04/k8sclass/02-Install/Terraform
 
 cd certs/
 kubectl config set-cluster $CLUSTER --server='https://<CLUSTER_IP>' --certificate-authority=ca.pem --embed-certs=true
@@ -277,8 +277,9 @@ Kubernetes gives us the ```kubectl``` command but it is just a client for access
 
 Go into the ```certs/``` directory again and run something like: 
 
-```
-curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
+```bash
+user04@lab01:~/k8sclass/02-Install/Terraform$ cd certs
+/home/user04/k8sclass/02-Install/Terraform/certs$ curl --cacert kubernetes.pem -H "Authorization: Bearer <token>" https://<lb-public-ip>/api/v1/pods
 ```
 
 Where ```<token>``` is what you defined in the ```metacloud.tf``` file and used in previous steps. 
