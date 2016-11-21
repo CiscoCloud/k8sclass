@@ -109,10 +109,10 @@ Next you need to know which flavor to use.
 ```
 openstack flavor list
 ```
-We will use the ```m1.large```.  Take note of this name or any other name as defined by instructor and update the ```metacloud.tf``` file to include this.  e.g.:
+We will use the ```m1.medium```.  Take note of this name or any other name as defined by instructor and update the ```metacloud.tf``` file to include this.  e.g.:
 
-```
-variable kube_flavor { default = "m1.large" }
+```yaml
+variable kube_flavor { default = "m1.medium" }
 ```
 
 ### Key 
