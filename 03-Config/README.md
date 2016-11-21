@@ -67,7 +67,7 @@ export CLUSTER=<cluster_name>
 Now let's configure ```kubectl```
 
 ```bash
-user04@lab01:~/k8sclass/01-Install/Terraform$ pwd
+user04@lab01:~/k8sclass/02-Install/Terraform$ pwd
 /home/user04/k8sclass/01-Install/Terraform
 
 cd certs/
@@ -122,7 +122,7 @@ This method is also similar to using bare metal kubernetes where there is a simp
 We'll have to first define our static routes.  To get these static routes we have a quick script for you to run.  Run the command:
 
 ```bash
-cd ~/k8sclass/01-Install/Terraform/
+cd ~/k8sclass/02-Install/Terraform/
 ./generate-neutron-routes.py
 ```
 

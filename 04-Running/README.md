@@ -49,16 +49,9 @@ Here are just some ways to interact with Kubernetes:
  * Using kubectl to push? files into kubernetes
 
 
-------
- Potenitally have a section where they just install nginx as an example (would require exposing service, maybe delete it then do guestbook install?
- 
- Additional notes:
-- discuss namespaces?
-- create some fun labels?
-- upgrade a component of the app?
- -----
- 
+---- 
 GIVE CREDIT TO GUESTBOOK K8S example!!
+----
 
 A preferred way involves maintaining yaml/json files in a repository and then easily pushing those files to Kubernetes. This avoids typos and allows for great detail tracking versions of files which can be 
 useful to rollback or debug an application.
