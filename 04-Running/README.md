@@ -15,6 +15,15 @@ This is an ideal application as it contains various components including:
  * a web front-end and backend DB
  * test 
 
+This lab will flow as follows:
+ 
+1. redis-master deployment
+2. Create redis-master service and pods
+3. Deploy redis-slave deployment, service, and pods
+4. Ceate frontend deployment
+5. Expose frontend using kubectl command
+6. Configure nginx load balancer to finally expose service
+
 #### Check status of environment
 First we want to make sure everything is healthy so lets check the status of the cluster. Use kubectl to check the status of your cluster.
  
@@ -65,7 +74,8 @@ Review the diagram at the begining of this lab
  * redis-master: a single-pod deployment with a service in front. This is used for persistant storage. 
  * redis-slave: a multi-pod deployment with a service in front. Data from the redis-master is replicated on the slaves
 
- The frontend will be accessible by anyone on the Internet. The frontend then interacts with the redis-master via javascript redis API calls. 
+The frontend will be accessible by anyone on the Internet. The frontend then interacts with the redis-master via javascript redis API calls. 
+
  
 #### Redis-master Deployment 
  
