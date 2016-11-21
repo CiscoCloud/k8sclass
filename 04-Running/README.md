@@ -306,8 +306,19 @@ rs/redis-master-2696761081   1         1         1         2d
 rs/redis-slave-798518109     2         2         2         2d
 ```
 
+If you have noticed, we have been labeling the various components. Examine the pods based on the tier label we have applied:
 
-
+```bash
+user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods -L tier
+NAME                            READY     STATUS    RESTARTS   AGE       TIER
+frontend-88237173-1wgst         1/1       Running   0          3m        frontend
+frontend-88237173-iiq50         1/1       Running   0          3m        frontend
+frontend-88237173-xswa6         1/1       Running   0          3m        frontend
+redis-master-2696761081-luk0y   1/1       Running   0          2d        backend
+redis-slave-798518109-0o6vc     1/1       Running   0          2d        backend
+redis-slave-798518109-q0gjd     1/1       Running   0          2d        backend
+```
+These pods should reflect the diagram of the deployment at the begining of this lab. 
 
 
 
