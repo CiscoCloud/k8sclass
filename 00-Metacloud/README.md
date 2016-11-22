@@ -1,4 +1,4 @@
-# 1. Metacloud Introduction
+# Metacloud Introduction
 
 ### Goals of this lab
 In this lab, you will become familiar with the OpenStack UI project, Horizon. We will be using a Metacloud enviroment for the lab. Metacloud is a private cloud offering based on OpenStack that comes with a 99.99% SLA across the entire stack.
