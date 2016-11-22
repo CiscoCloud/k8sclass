@@ -20,6 +20,7 @@ You should see the following:
 ![metacloudDashboard](images/mcDashboard.png)
 
 Click Launch Instance
+
  * Provide a unique instance name (cc_mytestinstance). Using your intiials can help ensure you have a unique name in the class.
  * Select the <b> m1.small </b> flavor
  * Set instance count to 1
