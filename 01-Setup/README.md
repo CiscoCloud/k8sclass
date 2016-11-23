@@ -1,6 +1,6 @@
-# Environment Setup
+# 1. Environment Setup
 
-In this lab you will use an already created VM preloaded with all of the necessary tools required for the labs. Whilst operating a production cluster, it is likely you may havet the tools loaded on another machine. Follow the appendix for some details on how to setup that environment. But for the purpose of this lab, lets stick with the provided VM.
+In this lab you will use an already created VM preloaded with all of the necessary tools required for the labs. Whilst operating a production cluster, it is likely you may have the tools loaded on another machine. Follow the appendix for some details on how to setup that environment. For this lab this lab, you will use the provided VM.
 
 ## Using the Lab Machines
 
@@ -80,7 +80,7 @@ You should now have everything you need to do the first lab and install your kub
 You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/01-Install/README.md)
 
 
-## Appendix: Setting your own Environment
+# Appendix: Setting your own Environment
 
 If you decide to do this on your own laptop you will need the following installed: 
 

@@ -1,15 +1,15 @@
-# Metacloud Introduction
+# 0. Metacloud Introduction
 
 ### Goals of this lab
-In this lab, you will become familiar with the OpenStack UI project, Horizon. We will be using a Metacloud enviroment for the lab. Metacloud is a private cloud offering based on OpenStack that comes with a 99.99% SLA across the entire stack.
+In this lab, you will become familiar with the OpenStack UI project, Horizon. We will be using a Metacloud environment for the lab. Metacloud is a private cloud offering based on OpenStack that comes with a 99.99% SLA across the entire stack.
 
-It makes use of the underlying unmodified OpenStack APIs. For the purpose of these labs, Metalcoud is just being used as a robust highly available OpenStack cloud. 
+It makes use of the underlying unmodified OpenStack APIs. For the purpose of these labs, Metacloud is just being used as a robust highly available OpenStack cloud. 
 
 More information on Metacloud can be found at [http://www.cisco.com/go/metacloud](http://www.cisco.com/go/metacloud)
 
 
-### Login to Metacloud environment
-Point your browser towards [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) or an alternate location if specified by the instrcuctor
+###  Login to Metacloud environment
+Point your browser towards [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) or an alternate location if specified by the instructor
 
 Login as: lab01 / PASSWORD
 
