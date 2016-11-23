@@ -65,5 +65,4 @@ For the remaining labs, [Terraform](www.terraform.io) will be used to interact w
 
 To put all this in further context, the following labs will use Terraform to interface with the OpenStack APIs. Instances (VMs) will be created automatically. These instances will be referred to as *nodes* in Kubernetes. Pods will then be deployed on these nodes.
 
-Cleanup Time!
- * Please delete/terminate your instance when you are finished.
+**Please delete/terminate your instance when you are finished.**
