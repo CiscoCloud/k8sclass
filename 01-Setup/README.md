@@ -4,24 +4,21 @@ In this lab you will use an already created VM preloaded with all of the necessa
 
 ## Using the Lab Machines
 
-The instructor will provide you with a login to the machines where all work will take place. It is recommended to print the accompanying reference.md file to fill in as you populate variables during the labs. 
+The instructor will provide you with access to the machines where all work will take place. It is recommended to print the accompanying [reference.md](../reference.md) and fill in as you populate variables during the labs. 
 
 ```bash
 ssh <username>@<ip>
 ```
-The Password is ```Cisco.123```
+The password is ```Cisco.123```
 
 
-## 1. Access the Cloud
+## Access the Cloud
 
-First we need to setup access to the cloud environment. Typically this could be AWS, GCE, or OpenStack. For these labs, we will be using Cisco's OpenStack solution, Metacloud.
+First we need to setup access to the cloud environment. Typically this could be AWS, GCE, or OpenStack. For these labs, we will be using Cisco's OpenStack solution, Metacloud. You should have just familiarized yourself with Metacloud in the previous lab.
 
-## 2. Setup the OpenStack environment variables
+### Setup OpenStack Environment Variables
 
-You should be able to log into the openstack cluster with user name ```lab01``` and password: ```ri3Ci!Wa```
-
-You can test this login at the following URL:<br>
-https://dashboard-trial5.client.metacloud.net/auth/login/
+You can log into the OpenStack cluster at [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) with username ```lab01``` and password: ```PASSWORD```.
 
 Set the following in your ```~/.profile``` file. This information will be read in by the OpenStack CLI client so that it can properly connect to the OpenStack cloud.
 
@@ -30,31 +27,44 @@ export OS_AUTH_URL=<Metacloud>
 export OS_TENANT_ID=<Tenant ID>
 export OS_TENANT_NAME=<Tenant Name>
 export OS_USERNAME="lab01"
-export OS_PASSWORD="ri3Ci!Wa"
+export OS_PASSWORD="PASSWORD"
 export OS_REGION_NAME="RegionOne"
 export OS_VOLUME_API_VERSION=1
 export OS_IMAGE_API_VERSION=1
 export OS_IMAGE_URL=<Image URL>
 ```
 
-To get these variables you may need to log into Metacloud and look at Access & Security in your project and then check the API Access screen. 
+To get some of these variables you will need to log into Metacloud and look at the **Access & Security** section for the project and examine the API section.
 
 ![api access](images/mc1.png)
 
-  * HINT: For the AUTH_URL look at the Identity section in the API list 
-  * The tenant id can be accessed from the Network >> Network >> Name of Network page in the Horizon dashboard
-  * The tenant name will be the same as the openstack project you are working in.
-  * Be sure to replace all variables that need to be set (contained betwen "< >")
+  * **HINT:** For the AUTH_URL look at the Identity section in the API list 
+  * The tenant_id can be accessed from the Network >> Network >> lab-net section in the Horizon dashboard
+  * The tenant name will be the same as the OpenStack project you are working in.
+  * Be sure to replace all variables that need to be set (contained beetwen "< >")
   * Syntax-wise, there should be no remaining < or  >'s
+
+Your file should look similar to the one below:
+
+```bash
+export OS_AUTH_URL=https://youshouldhavefoundme/v2.0
+export OS_TENANT_ID=1234567890
+export OS_TENANT_NAME=kubernetes-lab
+export OS_USERNAME="lab01"
+export OS_PASSWORD="PASSWORD"
+export OS_REGION_NAME="RegionOne"
+export OS_VOLUME_API_VERSION=1
+export OS_IMAGE_API_VERSION=1
+export OS_IMAGE_URL=https://youshouldhavefoundmetoo/v1
+
+```  
 
 Source this file: 
 
 ```
 . ~/.profile
 ```
-Now these variables will be active anytime you log into the cluster. 
-
-Test that it works: 
+Now these variables will be active anytime you log into the virtual machine. Test to make sure it works. 
 
 ```
 openstack server list
@@ -69,7 +79,9 @@ export OS_AUTH_URL=https://<given url>:5000/v3
 export OS_DOMAIN_NAME="<domain name>"
 ```
 
-## 3. Get Source Files
+### Get Source Files
+
+To obtain all the necessary files for working on these labs, you will clone the git repo. From your home directory run the following command.
 
 ```
 git clone https://github.com/CiscoCloud/k8sclass.git
@@ -77,7 +89,7 @@ git clone https://github.com/CiscoCloud/k8sclass.git
 
 You should now have everything you need to do the first lab and install your kubernetes cluster!
 
-You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/01-Install/README.md)
+You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Install/README.md)
 
 
 # Appendix: Setting your own Environment
@@ -142,4 +154,4 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin
 ```
 
-When you have these components you are now ready to setup your environment as specified in 
+When you have these components you are now ready to setup your environment as specified in the beginning of this lab.
