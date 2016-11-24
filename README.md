@@ -18,11 +18,13 @@ It is recommended to first print the [Reference](/reference.md) page. This way y
 
 ## Labs
 
-* [Environment Setup](00-Setup/README.md) - This lab covers setting up your workstation or logging into our lab machines to get started.  
-* [Metacloud Introduction](01-Metacloud/README.md) - This lab covers installing Kubernetes.  We use a Terraform script to bring it up quickly.  Its done on Metacloud.
-* [Installation Lab](02-Install/README.md) - This lab covers installing Kubernetes.  We use a Terraform script to bring it up quickly.  Its done on Metacloud. 
-* [Configuration Lab](03-Config/README.md) - This lab covers getting ```kubectl``` configured to work with our lab environment as well as the final touches of networking required to make our kubernetes cluster functional.  
-* [Running Kubernetes](04-Running/README.md) - This lab covers deploying and managing applications in our operational kubernetes environment. 
+* [Reference](reference.md) - Start by printing this for your reference
+* [00 -Metacloud Introduction](01-Metacloud/README.md) - This lab covers a basic overview of Metacloud.
+* [01 Environment Setup](01-Setup/README.md) - This lab covers setting up your lab VM for the rest of the labs  
+* [02 Installation Lab](02-Install/README.md) - This lab covers installing Kubernetes.  We use a Terraform script to bring it up quickly.  Its done on Metacloud. 
+* [03 Configuration Lab](03-Config/README.md) - This lab covers getting ```kubectl``` configured to work with our lab environment as well as the final touches of networking required to make our kubernetes cluster functional.  
+* [04 Running Kubernetes](04-Running/README.md) - This lab covers deploying and managing applications in our operational kubernetes environment.
+* [05 Kubernetes ops](05-Basics/READEME.md) - This lab covers some additional basic operations in Kubernetes.
 * [CI/CD Lab](05-CICD/README.md) - WIP
 * [Monitoring](06-Monitor/README.md) - WIP
 
