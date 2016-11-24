@@ -7,7 +7,6 @@ It makes use of the underlying unmodified OpenStack APIs. For the purpose of the
 
 More information on Metacloud can be found at [http://www.cisco.com/go/metacloud](http://www.cisco.com/go/metacloud)
 
-
 ###  Login to Metacloud environment
 Point your browser towards [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) or an alternate location if specified by the instructor
 
