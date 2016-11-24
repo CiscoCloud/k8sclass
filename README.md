@@ -5,6 +5,7 @@ This repository contains the labs and scripts for a Cisco Kubernetes class offer
 ## Summary
 After taking this class, attendees will feel comfortable with the following Kubernetes topics: 
 
+*  Metacloud - Basic intro to the OpenStack solution which Kubernetes run on top of
 *  Kubernetes components
 *  Deploying Kubernetes
 *  Basics of Kubernetes 
@@ -12,7 +13,7 @@ After taking this class, attendees will feel comfortable with the following Kube
 
 Additionally, hands-on labs will provide real world experience with Kubernetes.  
 
-__DISCLAIMER__ Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack offering named [Metacloud](http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html). 
+**DISCLAIMER** Many Kubernetes tutorials use GCE or AWS.  This material uses OpenStack, specifically, Cisco's OpenStack offering, [Metacloud](http://www.cisco.com/c/en/us/products/cloud-systems-management/metacloud/index.html). 
 
 It is recommended to first print the [Reference](/reference.md) page. This way you can record some variables you set for later use in the labs. 
 
