@@ -34,7 +34,7 @@ export OS_IMAGE_API_VERSION=1
 export OS_IMAGE_URL=<Image URL>
 ```
 
-To get some of these variables you will need to log into Metacloud and look at the **Access & Security** section for the project and examine the API section.
+To get some of these variables you will need to log into Metacloud and look at the **Access & Security** section for the project and examine the API section. Note the **Download OpenStack RC** link at the top right of the image below. This contains all of the environment variables you need for your OpenStack environment. In this lab, we have already provided you with the .profile mostly filled out.
 
 ![api access](images/mc1.png)
 

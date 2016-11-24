@@ -16,6 +16,8 @@ You will see the following:
 
 ![metacloudDashboard](images/mcDashboard.png)
 
+The name on the left of the page next to the ![home](images/home.png) is the name of the project or in OpenStack dialect, your **tenant name**.
+
 ### Launch a virtual machine (instance)
 One of the most common items to do is launch an instance also referred to as a virtual machine.
 
