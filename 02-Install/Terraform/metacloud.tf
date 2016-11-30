@@ -280,7 +280,7 @@ resource "null_resource" "hosts" {
 
 # copy the keys to all the nodes in the cluster. 
 resource "null_resource" "etcd" {
-  #depends_on = ["null_resource.lb", "null_resource.certs"]
+  depends_on = ["null_resource.lb", "null_resource.certs"]
 
   count = "${var.master_count}"
   connection {
@@ -312,6 +312,7 @@ resource "null_resource" "etcd" {
     content = "${element(data.template_file.etcd.*.rendered, count.index)}"
     destination = "etcd.service"
   }
+
 
   # put the files in place and get etcd working
   provisioner "remote-exec" {
