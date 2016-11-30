@@ -280,7 +280,7 @@ resource "null_resource" "hosts" {
 
 # copy the keys to all the nodes in the cluster. 
 resource "null_resource" "etcd" {
-  depends_on = ["null_resource.lb", "null_resource.certs"]
+  depends_on = ["null_resource.lb2", "null_resource.certs"]
 
   count = "${var.master_count}"
   connection {
