@@ -81,7 +81,7 @@ The frontend will be accessible by anyone on the Internet. The frontend then int
  
 The frontend will be communicating with the redis-master to store and retrieve data.
  
-The redis-master deployment file can be found in the lab3/guestbook/ folder.
+The redis-master deployment file can be found in the [lab 4/guestbook/](https://github.com/CiscoCloud/k8sclass/tree/master/04-Running/guestbook) folder.
 
 ```yaml
 apiVersion: extensions/v1beta1

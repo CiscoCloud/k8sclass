@@ -179,7 +179,9 @@ Hurray!  Now kubedns is up!
 
 We have been interacting with the cluster via kubectl. It can be nice to have a visual dashboard as well, so lets install one! First we will install the dashboard as a basic deployment (e.g: Pods): 
 
-```kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/03-Config/deployments/kubernetes-dashboard.yaml```
+```bash
+kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/03-Config/deployments/kubernetes-dashboard.yaml
+```
 
 Make sure its up:
 

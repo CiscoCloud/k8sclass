@@ -190,11 +190,13 @@ If this fails then check what variables might need to be changed or rerun the co
 
 **NOTE:**  There may be a bug in the terraform file so it may fail to build the first time (messages relating to certs/ca.pem). Simply running it again should get around this. Extra credit if you can identify the bug! 
 
+**NOTE:** If you change something after running this script once (after a failed attempt) you __MUST__ remove the ```hostfile``` and ```certs``` directory as these must be recreated.  This can be done with: 
+
+```
+rm -rf hostfile certs
+```
+After this is done you can run the command again. 
+
 It should finish cleanly.  If not, please see your instructor for help. 
 
 After this has built cleanly you are ready to go to the [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/03-Config/README.md) to verify and configure kubernetes. 
-
-**PUT EXAMPLE OUTPUT HERE**?
-
-
-
