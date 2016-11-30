@@ -58,13 +58,12 @@ Here are just some ways to interact with Kubernetes:
 
 
 ---- 
-GIVE CREDIT TO GUESTBOOK K8S example!!
----
+For this lab, we will be using the Guestbook example which is modeled after [this](https://github.com/kubernetes/kubernetes/tree/master/examples/guestbook)
 
 A preferred way involves maintaining yaml/json files in a repository and then easily pushing those files to Kubernetes. This avoids typos and allows for great detail tracking versions of files which can be 
 useful to rollback or debug an application.
 
-As such there are a few different ways we could deploy the guestbook application. For example, we could deploy the entire guestbook application including fronend servers, redis master and slaves by deploying a single YAML file! We don't  want to let you off that easy though. For this reason, we will deploy each component and walk through it seperately. 
+As such there are a few different ways we could deploy the guestbook application. For example, we could deploy the entire guestbook application including frontend servers, redis master and slaves by deploying a single YAML file! We don't  want to let you off that easy though. For this reason, we will deploy each component and walk through it separately. 
 
 This guestbook is nice as it has many components.
 Review the diagram at the begining of this lab
@@ -255,7 +254,7 @@ service "redis-master" created
 
 Since we are building a cloudy guestbook, we want to do everything we can do to ensure that our application is resilient across various failures. For this reason, we will create a redis-slave deployment. The data in the redis-master will be synced to the data in the redis-slave deployment.
 
-Similar to the redis-master deployment, we alreadty have a deployment file for the redis-slave.
+Similar to the redis-master deployment, we already have a deployment file for the redis-slave.
 
 Examine redis-slave.yaml closely.
 
@@ -364,14 +363,14 @@ The frontend guestbook service has now been exposed. In order to access it on po
 
 SSH into the load balancer using your key and public IP address: ```ssh -i ~/.ssh<yourkeyname.pem> ubuntu@<LB_IP>```
 
-Next, change to root and open the nginx conig file.
+Next, change to root and open the nginx config file.
 
 ```bash
 ubuntu@cc-nginx01:~$ sudo su -
 root@cc-nginx01:~# vi /etc/nginx/nginx.conf 
 ```
 
-Towards the bottom of the file, you will see the configuratioin on the frontend:
+Towards the bottom of the file, you will see the configuration on the frontend:
 
 ```yaml
         # guestbook service

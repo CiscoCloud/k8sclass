@@ -86,7 +86,5 @@ redis-slave-798518109-q0gjd     1/1       Running   0          2d
 ```
 
 
-#### Perform Rolling Upgrade
-
 
 
