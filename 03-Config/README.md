@@ -128,7 +128,9 @@ neutron port-update 9958fc43-075d-4577-9374-467c21c19371 --allowed-address-pairs
 neutron port-update 550eabc3-df51-4586-9680-b4b3f7279bea --allowed-address-pairs type=dict list=true ip_address=10.204.2.0/24
 ```
 
-These are the OpenStack commands that need to be run to enable the routes for your Kubernetes cluster.  Since your OpenStack user doesn't have the ability to run these commands, you'll have to get these commands to the instructor so they can run them. The instructor will mention the best way to do this (probably the [Spark](http://web.ciscospark.com) room that was setup at the beginning of class).
+
+
+These are the OpenStack commands that need to be run to enable the routes for your Kubernetes cluster.  Since your OpenStack user doesn't have the ability to run these commands, **you'll have to get these commands to the instructor so they can run them**. The instructor will mention the best way to do this (probably the [Spark](http://web.ciscospark.com) room that was setup at the beginning of class).
 
 Once they run these commands they will let you know and you can move on!  Maybe, now is a good time to go get some coffee while you wait.
 

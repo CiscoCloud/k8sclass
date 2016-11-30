@@ -6,7 +6,6 @@ You will be familiar of basic operations with Kubernetes including deploying app
 We will use a common guestbook application. The architecture in the end will look like the following:<BR>
 <img src="images/guestbookPods.png" width="600" align="center">
 
-
 This is an ideal application as it contains various components including:
 
  * a single node deployment
