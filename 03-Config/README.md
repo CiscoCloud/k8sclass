@@ -6,7 +6,7 @@ The previous lab just did all the set up for you to install Kubernetes, but ther
 
 Our Kubernetes cluster is front-ended by an nginx reverse proxy load balancer that uses the 3 controllers.  
 
-Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added a ```01``` to the end of it.  So if you named your load-balancer ```cc-lb``` the name you need is ```cc-lb01```. You can also see all of your instances from the **intances** page in the Metacloud Horizon dashboard.
+Remember in the last lab that you named your load balancer?  What was the name?  Whatever it was, the terraform script added a ```01``` to the end of it.  So if you named your load-balancer ```cc-lb``` the name you need is ```cc-lb01```. You can also see all of your instances from the **instances** page in the Metacloud Horizon dashboard.
 
 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```cc-lb01```).
