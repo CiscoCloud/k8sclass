@@ -355,7 +355,7 @@ Session Affinity:	None
 
 In this example, the NodePort is 31245. This means if you access the workers on this port, you should be able to access this service. 
 However, in this lab environment, the only node accessible from the Internet is the VM with the public IP assigned to it (the nginX load balanceR). 
-Make node of the port in your reference printout.
+Make note of the port in your reference printout.
 
 #### Configure Load Balancer
 
