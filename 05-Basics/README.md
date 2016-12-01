@@ -12,11 +12,15 @@ One of the core features of kuberntes is allowing the user to easily scale the a
 
 Lets say, you have deployed this popular guestbook application. You are now sharing the link to your guestbook all over the social media sites and are expecting a flood of traffic to your site. It would be logical to scale this application to accomodate the increase in traffic.
 
+<<<<<<< HEAD
 Confirm the current deploying, running the command ```kubectl decsribe deployment frontend```
+=======
+Confirm the current deploying, running the command ```kubectl describe deployment frontend```
+>>>>>>> origin/master
 
 To scale, the deployment, issue the following command: ```kubectl scale deployment frontend --replicas=8```
 
-You can confirm your application scaled by issueing the describe command again or you can query all of the pods.
+You can confirm your application scaled by issuing the describe command again or you can query all of the pods.
 
 ```bash
 user04@lab01:~/k8sclass/03-Config$ kubectl get pods

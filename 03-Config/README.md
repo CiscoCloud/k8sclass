@@ -244,6 +244,7 @@ Notice that the port that this service exposes is 9999.  If you look in the ```t
 ```
 http://<load-balancer-floating-ip-address>
 ```
+You can find your load balancer IP address from: ``` openstack server list | grep lb ```
 
 You'll then be prompted for a user name and password.  We specified this in the ```metacloud.tf``` file.  (you can see it around line 239 with the ```htpasswd``` command)
 
