@@ -79,7 +79,7 @@ The frontend will be accessible by anyone on the Internet. The frontend then int
  
 The frontend will be communicating with the redis-master to store and retrieve data.
  
-The redis-master deployment file can be found in the [lab 4/guestbook/](https://github.com/CiscoCloud/k8sclass/tree/master/04-Running/guestbook) folder.
+The redis-master deployment file can be found in the [04-Running/guestbook/](https://github.com/CiscoCloud/k8sclass/tree/master/04-Running/guestbook) folder.
 
 ```yaml
 apiVersion: extensions/v1beta1
@@ -130,7 +130,7 @@ Examining this deployment file we notice a few things:
  * There are various labels set.
  * In the container section, it lists the source for the redis image as well as some requests for resources <b>(do we mention this in the presentation)?</b>
 
-cd into the lab04 guestbook directory and run the following command to create this deployment in your cluster:
+cd into the 04-Running guestbook directory and run the following command to create this deployment in your cluster:
 
 ```bash
 user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
