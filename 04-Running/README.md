@@ -66,7 +66,7 @@ useful to rollback or debug an application.
 As such there are a few different ways we could deploy the guestbook application. For example, we could deploy the entire guestbook application including frontend servers, redis master and slaves by deploying a single YAML file! We don't  want to let you off that easy though. For this reason, we will deploy each component and walk through it separately. 
 
 This guestbook is nice as it has many components.
-Review the diagram at the begining of this lab
+Review the diagram at the beginning of this lab
 
  * frontend: a multi-pod deployment with a service in front. This is a nginx web server to access the guestbook.
  * redis-master: a single-pod deployment with a service in front. This is used for persistant storage. 
@@ -125,12 +125,12 @@ spec:
 
 Examining this deployment file we notice a few things:
 
- * The kind is set to <b>deployment</b>
+ * The kind is set to **deployment**
  * replicas is set to 1. This means that if the pod dies, an another will automatically be spun up by Kubernetes.
  * There are various labels set.
  * In the container section, it lists the source for the redis image as well as some requests for resources <b>(do we mention this in the presentation)?</b>
 
-cd into the lab3 guestbook directory and run the following command to create this deployment in your cluster:
+cd into the lab04 guestbook directory and run the following command to create this deployment in your cluster:
 
 ```bash
 user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
@@ -259,7 +259,7 @@ Similar to the redis-master deployment, we already have a deployment file for th
 Examine redis-slave.yaml closely.
 
 Hopefully you noticed a few things:
- * There is a service defined at the top of the file called <b>redis-slave</b>
+ * There is a service defined at the top of the file called **redis-slave**
  * There is also a deployment defined beneath this service
  * Replicas is set to 2 for this. This will ensure that there are always 2 redis-slaves running. 
  * I need to find out why their isn't a replicaset defined here... is it implied?
