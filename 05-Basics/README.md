@@ -12,7 +12,7 @@ One of the core features of kuberntes is allowing the user to easily scale the a
 
 Lets say, you have deployed this popular guestbook application. You are now sharing the link to your guestbook all over the social media sites and are expecting a flood of traffic to your site. It would be logical to scale this application to accomodate the increase in traffic.
 
-Confirm the current deploying, running the command ```kubectl decribe deployment frontend```
+Confirm the current deploying, running the command ```kubectl decsribe deployment frontend```
 
 To scale, the deployment, issue the following command: ```kubectl scale deployment frontend --replicas=8```
 
