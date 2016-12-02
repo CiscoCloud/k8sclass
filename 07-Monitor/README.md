@@ -48,7 +48,7 @@ This has been previously set up on the nginx cluster to reverse proxy to this po
 
 ### 1.  Install Fluentd DaemonSet
 
-[fluentd](https://fluentd.io) is used for collecting container logs.  
+[fluentd](https://fluentd.org) is used for collecting container logs.  
 
 Run: 
 

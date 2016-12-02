@@ -359,39 +359,21 @@ Make node of the port in your reference printout.
 
 #### Configure Load Balancer
 
-The frontend guestbook service has now been exposed. In order to access it on port 31245 you will need to do a slight modification to your load balancer.
+Now we will edit the service. 
 
-SSH into the load balancer using your key and public IP address: ```ssh -i ~/.ssh<yourkeyname.pem> ubuntu@<LB_IP>```
+```
+kubectl edit svc frontend
+```
+Make it so the nodePort is ```31433``` around line 21.  Example: 
 
-Next, change to root and open the nginx config file.
-
-```bash
-ubuntu@cc-nginx01:~$ sudo su -
-root@cc-nginx01:~# vi /etc/nginx/nginx.conf 
+```
+  ...
+  - nodePort: 31433
+  ...
 ```
 
-Towards the bottom of the file, you will see the configuration on the frontend:
+When you ran the ```kubectl expose``` command it created a service based on the deployment.  Running the ```kubectl edit``` command like we did above makes it so you can change the dynamic node port that was assigned to the container to something we configured already in nginx.  If you look at the [template file](https://github.com/CiscoCloud/k8sclass/blob/master/02-Install/Terraform/templates/nginx.conf.tpl) that we deployed with Terraform, you'll see that we already accounted for port 31433 being the node port that nginx will map to. 
 
-```yaml
-        # guestbook service
-        upstream guestbook {
-                server 192.168.7.205:31245;
-                server 192.168.7.204:31245;
-        }
-
-
-        server {
-                listen 8888;
-                server_name _;
-                location / {
-                        proxy_pass http://guestbook;
-                }
-        }
-```
-
-In the upstream section, change the server ports from 31245 to your NodePort (see reference sheet). Notice the frontend is already mapped to 8888.
-
-Finally, restart nginx for changes to take effect using the command ``` service nginx restart```
 
 Open a browser to access your guestbook at the URL: http://<LB_IP>:8888
 
