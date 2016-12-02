@@ -50,7 +50,7 @@ One of the most common items to do is launch an instance also referred to as a v
  * Click the name of the instance on the left.
  * Explore the various tabs at the top: **Overview, Log, Console, Action Log**.
  * Select the **Console** tab and then right click **Click here to show only console** and select the option to **Open link in new tab**.
- * Login to the instance using the credentials in the display **(cirros / cubswin!)**. This has actually been the default password for Cirros... yes even before the 2016 World Series!
+ * Login to the instance using the credentials in the display **cirros / cubswin:)**. This has actually been the default password for Cirros... yes even before the 2016 World Series!
  * Revert back to the other Metacloud tab in your browser.
  * Click the **Instances** link at the left.  
   

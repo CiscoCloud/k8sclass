@@ -39,7 +39,7 @@ To get some of these variables you will need to log into Metacloud and look at t
 ![api access](images/mc1.png)
 
   * **HINT:** For the AUTH_URL look at the Identity section in the API list 
-  * The tenant_id can be accessed from the Network >> Network >> lab-net section in the Horizon dashboard
+  * The tenant_id or project ID can be accessed from the Network >> Network >> lab-net section in the Horizon dashboard
   * The tenant name will be the same as the OpenStack project you are working in.
   * Be sure to replace all variables that need to be set (contained beetwen "< >")
   * Syntax-wise, there should be no remaining < or  >'s
