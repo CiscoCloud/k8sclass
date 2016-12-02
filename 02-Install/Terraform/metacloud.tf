@@ -37,13 +37,6 @@ variable private_key_file { default = "~/.ssh/t5.pem"} # the location of your pr
 variable security_group { default = "default" } # openstack security group to use. 
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" } # the pool of floating IP addresses. 
 
-# sample for Trial 14
-#variable network { default = "twenty" } # what openstack network do we use? 
-#variable kube_image { default = "Ubuntu16.04"} # what image do we use? 
-#variable ip_pool { default = "PUBLIC EXTERNAL - DO NOT MODIFY" } # the pool of floating IP addresses. 
-#variable key_pair { default = "k14" } # what is the keypair name to use?  This should already have been created. 
-#variable private_key_file { default = "~/.ssh/k14.pem"} # the location of your private key. 
-
 ## Kubernetes Variables
 
 # these variables are used to tweek your cluster. 
@@ -376,7 +369,7 @@ data "template_file" "kube-tokens" {
 }
 
 resource "null_resource" "kube-master" {
-  depends_on = ["null_resource.etcd"]
+  depends_on = ["null_resource.etcd", "null_resource.hosts", "null_resource.lb2"]
 
   count = "${var.master_count}"
   connection {
@@ -520,7 +513,7 @@ data "template_file" "rclocal" {
 
 
 resource "null_resource" "kube-workers" {
-  depends_on = ["null_resource.kube-master", "null_resource.certs"]
+  depends_on = ["null_resource.kube-master", "null_resource.certs", "null_resource.hosts", "null_resource.lb2" ]
 
   count = "${var.worker_count}"
   connection {
