@@ -15,11 +15,11 @@
 # up in Openstack as the hostnames. 
 # This also includes the quantities.  3 controllers gives redundancy and is a safe pick. 
 # for the workers pick as many as you have room for.  
-variable lb_name { default = "nginx"}
+variable lb_name { default = "cc-lb"}
 variable lb_count { default = "1" }
-variable master_name { default = "kube-controller"}
+variable master_name { default = "cc-kube-controller"}
 variable master_count { default = "3" }
-variable worker_name { default = "kube-worker" }
+variable worker_name { default = "cc-kube-worker" }
 variable worker_count { default = "3" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
@@ -31,17 +31,17 @@ variable count_format { default = "%02d" } #server number format (01, 02, ...)
 variable ssh_user { default = "ubuntu" }  # what is the user name that should be used to log into the nodes? 
 variable network { default = "lab-net" } # what openstack network do we use? 
 variable kube_image { default = "ubuntu_1604_server_cloudimg_amd64"} # what image do we use? 
-variable kube_flavor { default = "m1.bigly" } # the flavor of the machines.  
-variable key_pair { default = "t5" } # what is the keypair name to use?  This should already have been created. 
-variable private_key_file { default = "~/.ssh/t5.pem"} # the location of your private key. 
+variable kube_flavor { default = "m1.xlarge" } # the flavor of the machines.  
+variable key_pair { default = "mykey" } # what is the keypair name to use?  This should already have been created. 
+variable private_key_file { default = "~/.ssh/mykey.pem"} # the location of your private key. 
 variable security_group { default = "default" } # openstack security group to use. 
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" } # the pool of floating IP addresses. 
 
 ## Kubernetes Variables
 
 # these variables are used to tweek your cluster. 
-variable kube_token { default = "f00bar.f00barf00bar1234" } # pick a token that can be used to log into the cluster. 
-variable cluster_name { default = "mykubernetes" } # name of your kubernetes cluster. 
+variable kube_token { default = "foobar.f00barf00bar1234" } # pick a token that can be used to log into the cluster. 
+variable cluster_name { default = "sevt" } # name of your kubernetes cluster. 
 variable cluster_domain {default = "cluster.local" } # the internal Kube cluster domain. 
 
 # each kube worker will get assigned a /24 network from this cluster_cidr network.  so if
@@ -50,11 +50,11 @@ variable cluster_domain {default = "cluster.local" } # the internal Kube cluster
 # to resolve this IP range. 
 
 # first what is the default overarching subnet?  
-variable cluster_cidr {default = "10.214.0.0/16" }
+variable cluster_cidr {default = "10.231.0.0/16" }
 
 # second: we will make individual ranges for each node.  What will it start with? 
 # right now only /24 is supported.  This prefix should match the cluster_cidr defined above. 
-variable cluster_nets_prefix {default = "10.214" }
+variable cluster_nets_prefix {default = "10.231" }
 variable cluster_nets_suffix {default = "0\\/24" }
 
 # the interface device is the device your VM was/will be configured with by openstack.  Was it ens3? eth0? 
@@ -159,14 +159,6 @@ data "template_file" "kubernetes-csr" {
   }
 }
 
-# debugging
-#output "certs" {
-#  value = "${data.template_file.kubernetes-csr.rendered}"
-#}
-output "cbr" {
-  value = "${data.template_file.cbr0.0.rendered}"
-}
-
 
 # generate the certificates
 # we assume you have cfssljson and cfssl installed.  Otherwise this will fail. 
@@ -196,6 +188,10 @@ resource "null_resource" "certs" {
 resource "null_resource" "lbhosts" {
   depends_on = ["openstack_compute_instance_v2.lb", "openstack_compute_instance_v2.kube-worker", "openstack_compute_instance_v2.kube-master"]
   # create hostfile for everyone. 
+  # sleep for a bit to see if tf writes files. 
+  provisioner "local-exec" {
+    command = "sleep 5"
+  }
   provisioner "local-exec" {
     command = "./terraform.py --hostfile | sed 's/^## begin.*/127.0.0.1 localhost/' >hostfile"
   }
@@ -249,7 +245,7 @@ data "template_file" "etcd" {
 
 # get hosts file to the nodes. 
 resource "null_resource" "hosts" {
-  depends_on = ["openstack_compute_instance_v2.lb", "openstack_compute_instance_v2.kube-worker", "openstack_compute_instance_v2.kube-master"]
+  depends_on = ["openstack_compute_instance_v2.lb", "null_resource.lbhosts" , "openstack_compute_instance_v2.kube-worker", "openstack_compute_instance_v2.kube-master"]
   count = "${var.master_count + var.worker_count + var.lb_count}"
   connection {
     type = "ssh"
@@ -369,7 +365,7 @@ data "template_file" "kube-tokens" {
 }
 
 resource "null_resource" "kube-master" {
-  depends_on = ["null_resource.etcd", "null_resource.hosts", "null_resource.lb2"]
+  depends_on = ["null_resource.etcd", "null_resource.hosts", "null_resource.lb2", "null_resource.lbhosts"]
 
   count = "${var.master_count}"
   connection {
@@ -486,8 +482,7 @@ data "template_file" "cbr0" {
   count = "${var.worker_count}"
   template = "${file("templates/cbr0.cfg.tpl")}"
   vars {
-    # this will create something like 201.25.(count).0/24
-    docker_bridge = "${format("%s.%s.0/24", var.cluster_nets_prefix, element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index))}"
+    docker_bridge = "DOCKERBRIDGE.0/24"
     # this will create a list of:  up route add -net 201.25.0.0/24 gw 10.106.0.144 dev ens3
     static_routes = "${join("\n", formatlist("up route add -net %s.%s.0/24 gw %s dev %s", 
                       var.cluster_nets_prefix, 
@@ -513,7 +508,7 @@ data "template_file" "rclocal" {
 
 
 resource "null_resource" "kube-workers" {
-  depends_on = ["null_resource.kube-master", "null_resource.certs", "null_resource.hosts", "null_resource.lb2" ]
+  depends_on = ["openstack_compute_instance_v2.kube-worker", "null_resource.certs", "null_resource.hosts", "null_resource.lb2"]
 
   count = "${var.worker_count}"
   connection {
@@ -589,7 +584,8 @@ resource "null_resource" "kube-workers" {
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
       # have to remove the local bridge entry for this host from cbr0
-      "sed -e 's/^up.*${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg1",
+      "sed -e 's/^up.*${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg0",
+      "sed -e 's/DOCKERBRIDGE/${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}/g' cbr0.cfg0 > cbr0.cfg1",
       "sudo mv cbr0.cfg1 /etc/network/interfaces.d/cbr0.cfg",
       "sudo mv kubeconfig /var/lib/kubelet/",
       "sudo mv kubectl kube-proxy kubelet /usr/bin",
