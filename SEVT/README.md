@@ -7,6 +7,7 @@
 [Lab is Here](LOGIN.md)
 
 ## Module 2: Configure ```kubectl```
+[Lab is Here](KUBECTL.md)
 
 ## Module 3: Deploy Guestbook
 
