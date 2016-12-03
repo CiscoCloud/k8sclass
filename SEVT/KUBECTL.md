@@ -1,6 +1,8 @@
 # A gentle tour of ```KUBECTL``` 
 
-In this lab you will configure ```kubectl``` to communicate with the big kubernetes cluster.  
+
+## 0. Goals
+The goals of this lab are for you to configure ```kubectl``` to communicate with the big kubernetes cluster.  Then you will run a few basic kubectl commands to show key concepts. This lab seeks to be a gentle introduction to kubernetes.  
 
 ## 1. Setup Kubectl
 
@@ -23,7 +25,7 @@ The values for these variables are in the spark room.
 In this lab, every user will use their own namespace so as not to clobber other users.  Set the namespace by running the command: 
 
 ```
-export NAMEAPCE=<yournamespace>
+export NAMESPACE=<yournamespace>
 ```
 
 Where ```<yournamespace>``` is a combination of your initials plus your lab number: ```<username><your initials>```
@@ -85,6 +87,11 @@ Get the cluster info:
 
 ```
 kubectl cluster-info
+```
+Get the component status:
+
+```
+kubectl get componentstatuses
 ```
 
 ### 2.3.  Get help from kubernetes! 

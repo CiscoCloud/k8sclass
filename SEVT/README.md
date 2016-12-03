@@ -10,5 +10,6 @@
 [Lab is Here](KUBECTL.md)
 
 ## Module 3: Deploy Guestbook
+[Lab is Here](RUNNING.md)
 
 ## Module 4: Lifecycle Operations
