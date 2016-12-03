@@ -257,12 +257,4 @@ Here ```<node IP>``` is a public IP address exposed from the kubernetes cluster.
 <img src="../04-Running/images/guestbookRunning.png">
 
 
-
-
-
-
-
-
-
-
-
+You are done!  [Go back to main class page](README.md)

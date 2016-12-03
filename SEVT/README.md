@@ -13,3 +13,4 @@
 [Lab is Here](RUNNING.md)
 
 ## Module 4: Lifecycle Operations
+[Lab is Here](LIFECYCLE.md)
