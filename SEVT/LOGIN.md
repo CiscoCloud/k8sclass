@@ -18,9 +18,20 @@ __Note:__ this is an example only and may not be what is up on etherpad
 
 Once you have selected a lab machine from the etherpad, log into the lab machine: 
 
+### From Mac or Linux
+Open the terminal and run:
+
 ```
 ssh user215@208.49.34.2
 ```
+### From Windows
+
+Use [PuTTY](http://www.putty.org/) to login: 
+
+![putty](images/putty.png)
+
+
+
 The password for all lab machines will be in the spark room. 
 
 You are done!  [Go back to main class page](README.md)
