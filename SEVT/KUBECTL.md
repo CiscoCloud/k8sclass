@@ -32,6 +32,9 @@ Where ```<yournamespace>``` is a combination of your initials plus your lab numb
 
 As an example, If my name were Captain Cloud and I was user ```user68```, then I would run the command: ```export NAMESPACE=user68cc```
 
+Be sure your namespace is ALL lowercase characters. **DO NOT USE UPPERCASE.** It is OK to run the same command with a correct unique namespace now.
+
+
 ### 1.4. Configure ```kubectl```
 
 After running each of the below commands you may wish to run ```cat ~/.kube/config```.  You'll see that these commands will modify that file and ```kubectl``` looks in that file for how to target the appropriate kubernetes cluster. 
