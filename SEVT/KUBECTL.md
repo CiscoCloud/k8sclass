@@ -37,7 +37,7 @@ Be sure your namespace is ALL lowercase characters. **DO NOT USE UPPERCASE.** It
 
 ### 1.4. Configure ```kubectl```
 
-After running each of the below commands you may wish to run ```cat ~/.kube/config```.  You'll see that these commands will modify that file and ```kubectl``` looks in that file for how to target the appropriate kubernetes cluster. 
+After running each of the below commands you may wish to run ```cat ~/.kube/config```.  (If you run it now it will fail because no file has been created yet!) You'll see that these next set of commands will modify that file.  ```kubectl``` looks in that file for how to target the appropriate kubernetes cluster. 
 
 #### Define the cluster
 ```
@@ -66,11 +66,23 @@ kubectl config use-context default-context
 kubectl config set-context default-context --namespace=$NAMESPACE
 ```
 
+#### Checkpoint 
+
+At this point all the commands you have run modified the ```~/.kube/config``` file.  If you have done everything correctly, you should be able to see all the nodes.  Try running: 
+
+```
+kubectl get nodes
+```
+
+If you see all the nodes of the cluster give yourself a pat on the back!  You are doing great things!  If it didn't work, please let the proctors know. 
+
 #### Create the namespace on the kubernetes cluster
+
+__IMPORTANT:__ Because there multiple people running on the same cluster, every user needs to run in their own namespace.  You created the default namespace above in your ```~/.kube/config``` file, but now you need to let the kubernetes cluster know about it:
+
 ```
 kubectl create namespace $NAMESPACE
 ```
-
 
 ## 2. Test Drive ```kubectl```
 
