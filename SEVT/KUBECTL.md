@@ -78,7 +78,7 @@ If you see all the nodes of the cluster give yourself a pat on the back!  You ar
 
 #### Create the namespace on the kubernetes cluster
 
-__IMPORTANT:__ Because there multiple people running on the same cluster, every user needs to run in their own namespace.  You created the default namespace above in your ```~/.kube/config``` file, but now you need to let the kubernetes cluster know about it:
+__IMPORTANT:__ Because there multiple people running on the same cluster, every user needs to run in their own namespace.  You created the default namespace above in your ```~/.kube/config``` file, but now you need to actually create that namespace on the kubernetes cluster:
 
 ```
 kubectl create namespace $NAMESPACE
