@@ -16,7 +16,7 @@ Lets say, you have deployed this popular guestbook application. You are now shar
 Confirm the current deploying, running the command 
 
 ```
-kubectl decsribe deployment frontend
+kubectl describe deployment frontend
 ```
 
 
