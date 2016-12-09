@@ -42,7 +42,7 @@ Notice that you never formatted the volume, you just created it.  We give it the
 
 Save this file, you are now ready to deploy it!
 
-## Deploy and Log into the container
+## 3. Deploy and Log into the container
 
 Deploy the container with: 
 
