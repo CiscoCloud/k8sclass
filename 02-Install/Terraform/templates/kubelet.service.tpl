@@ -5,7 +5,7 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStart=/usr/bin/kubelet --allow-privileged=true --api-servers=${api_servers} --cloud-provider= --cluster-dns=${cluster_dns} --cluster-domain=${cluster_domain} --configure-cbr0=false --container-runtime=docker --docker=unix:///var/run/docker.sock  --kubeconfig=/var/lib/kubelet/kubeconfig --reconcile-cidr=true --serialize-image-pulls=false --tls-cert-file=/var/lib/kubernetes/kubernetes.pem --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem --v=2
+ExecStart=/usr/bin/kubelet --allow-privileged=true --api-servers=${api_servers} --cloud-provider=openstack --cloud-config=/etc/metacloud.cfg --cluster-dns=${cluster_dns} --cluster-domain=${cluster_domain} --configure-cbr0=false --container-runtime=docker --docker=unix:///var/run/docker.sock  --kubeconfig=/var/lib/kubelet/kubeconfig --reconcile-cidr=true --serialize-image-pulls=false --tls-cert-file=/var/lib/kubernetes/kubernetes.pem --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem --v=2
 
 Restart=on-failure
 RestartSec=5

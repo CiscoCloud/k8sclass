@@ -24,6 +24,10 @@ variable worker_count { default = "3" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
 ## OpenStack Variables
+variable "auth_url" {}
+variable "username" {}
+variable "password"  {}
+variable "tenant_id" {}
 
 # these variables are specific to your OpenStack cluster. 
 # should be Ubuntu 16.04 and reasonable size. 
@@ -31,9 +35,9 @@ variable count_format { default = "%02d" } #server number format (01, 02, ...)
 variable ssh_user { default = "ubuntu" }  # what is the user name that should be used to log into the nodes? 
 variable network { default = "lab-net" } # what openstack network do we use? 
 variable kube_image { default = "ubuntu_1604_server_cloudimg_amd64"} # what image do we use? 
-variable kube_flavor { default = "m1.xlarge" } # the flavor of the machines.  
-variable key_pair { default = "mykey" } # what is the keypair name to use?  This should already have been created. 
-variable private_key_file { default = "~/.ssh/mykey.pem"} # the location of your private key. 
+variable kube_flavor { default = "m1.medium" } # the flavor of the machines.  
+variable key_pair { default = "t5" } # what is the keypair name to use?  This should already have been created. 
+variable private_key_file { default = "~/.ssh/t5.pem"} # the location of your private key. 
 variable security_group { default = "default" } # openstack security group to use. 
 variable ip_pool { default = "PUBLIC DO NOT MODIFY" } # the pool of floating IP addresses. 
 
@@ -41,7 +45,7 @@ variable ip_pool { default = "PUBLIC DO NOT MODIFY" } # the pool of floating IP 
 
 # these variables are used to tweek your cluster. 
 variable kube_token { default = "foobar.f00barf00bar1234" } # pick a token that can be used to log into the cluster. 
-variable cluster_name { default = "sevt" } # name of your kubernetes cluster. 
+variable cluster_name { default = "mycluster" } # name of your kubernetes cluster. 
 variable cluster_domain {default = "cluster.local" } # the internal Kube cluster domain. 
 
 # each kube worker will get assigned a /24 network from this cluster_cidr network.  so if
@@ -64,7 +68,7 @@ variable if_dev {default = "ens3" }
 
 # The service cluster should not overlap with the cluster_cidr and is the network all services
 # will be constructed from.  
-variable service_cluster_net { default = "10.32.0.0/24"}
+variable service_cluster_net { default = "10.32.0.0/23"}
 
 # This IP is the main IP that all kube-proxies will route service requests to for services. 
 variable service_cluster_ip { default = "10.32.0.1" } # cluster IP used by the servers. 
@@ -74,6 +78,7 @@ variable cluster_dns {default = "10.32.0.10"}
 
 
 provider "openstack" {
+  alias = "metacloud"
 }
 
 # we only need one floating IP address per load balancer.  The rest of the cluster sits
@@ -476,6 +481,16 @@ data "template_file" "kube-proxy" {
   }
 }
 
+data "template_file" "metacloud" {
+  template = "${file("templates/metacloud.cfg.tpl")}"
+  vars {
+    auth_url = "${var.auth_url}"
+    username = "${var.username}"
+    password = "${var.password}"
+    tenant_id = "${var.tenant_id}"
+    region = "RegionOne"
+  }
+}
 
 # configure cbr0 individually on each host. 
 data "template_file" "cbr0" {
@@ -503,9 +518,6 @@ data "template_file" "rclocal" {
                       var.if_dev))}"
   }
 }
-
-
-
 
 resource "null_resource" "kube-workers" {
   depends_on = ["openstack_compute_instance_v2.kube-worker", "null_resource.certs", "null_resource.hosts", "null_resource.lb2"]
@@ -553,6 +565,12 @@ resource "null_resource" "kube-workers" {
     destination = "cbr0.cfg"
   }
 
+  # the openstack credentials to the kubelet
+  provisioner "file" {
+    content = "${data.template_file.metacloud.rendered}"
+    destination = "metacloud.cfg"
+  }
+
   # get the kubeconfig
   provisioner "file" {
     content = "${element(data.template_file.kubeconfig.*.rendered, count.index)}"
@@ -569,7 +587,10 @@ resource "null_resource" "kube-workers" {
   # install certs and docker. 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt install bridge-utils",
+      "supo apt-get update",
+      #"echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections",
+      #"sudo apt-get -y install bridge-utils iptables-persistent",
+      "sudo apt-get -y install bridge-utils",
       "sudo mkdir -p /var/lib/kubernetes",
       "sudo mkdir -p /var/lib/kubelet",
       "sudo mkdir -p /opt/cni",
@@ -583,6 +604,7 @@ resource "null_resource" "kube-workers" {
       "sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni", 
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
+      "sudo mv metacloud.cfg /etc/metacloud.cfg",
       # have to remove the local bridge entry for this host from cbr0
       "sed -e 's/^up.*${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg0",
       "sed -e 's/DOCKERBRIDGE/${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}/g' cbr0.cfg0 > cbr0.cfg1",
@@ -599,7 +621,9 @@ resource "null_resource" "kube-workers" {
       "sudo systemctl enable kube-proxy",
       "sudo systemctl restart docker",
       "sudo systemctl restart kubelet",
-      "sudo systemctl restart kube-proxy"
+      "sudo systemctl restart kube-proxy",
+      "sudo iptables -t nat -A POSTROUTING ! -d 10.0.0.0/8 -o ${var.if_dev} -j MASQUERADE",
+      "sudo iptables-save"
     ]
   }
 }  
