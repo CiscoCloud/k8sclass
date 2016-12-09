@@ -407,6 +407,12 @@ resource "null_resource" "kube-master" {
     destination = "rc.local"
   }
 
+  # the openstack credentials to the kubelet
+  provisioner "file" {
+    content = "${data.template_file.metacloud.rendered}"
+    destination = "metacloud.cfg"
+  }
+
   provisioner "file" {
     source = "templates/authorization-policy.jsonl"
     destination = "authorization-policy.jsonl"
@@ -431,6 +437,7 @@ resource "null_resource" "kube-master" {
   # copy the config files to the right place. 
   provisioner "remote-exec" {
     inline = [
+      "sudo mv metacloud.cfg /etc/",
       "sudo mv token.csv /var/lib/kubernetes/",
       "sudo mv authorization-policy.jsonl /var/lib/kubernetes/",
       "sudo mv kube-apiserver.service /etc/systemd/system/",

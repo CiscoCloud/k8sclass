@@ -3,7 +3,7 @@ Description=Kubernetes Controller Manager
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
-ExecStart=/usr/bin/kube-controller-manager --allocate-node-cidrs=false --cluster-cidr=${cluster_cidr} --cluster-name=${cluster_name} --leader-elect=true --master=http://${hostip}:8080 --root-ca-file=/var/lib/kubernetes/ca.pem --service-account-private-key-file=/var/lib/kubernetes/kubernetes-key.pem --service-cluster-ip-range=${service_cluster_ip_range} --v=2
+ExecStart=/usr/bin/kube-controller-manager --allocate-node-cidrs=false --cluster-cidr=${cluster_cidr} --cluster-name=${cluster_name} --leader-elect=true --master=http://${hostip}:8080 --root-ca-file=/var/lib/kubernetes/ca.pem --service-account-private-key-file=/var/lib/kubernetes/kubernetes-key.pem --service-cluster-ip-range=${service_cluster_ip_range} --v=2 --cloud-provider=openstack --cloud-config=/etc/metacloud.cfg 
 Restart=on-failure
 RestartSec=5
 
