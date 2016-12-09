@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - mountPath: /vol/
+          name: nginx
+        ports:
+        - containerPort: 80
+      volumes: 
+        - name: nginx
+          cinder: 
+            volumeID: 9ae262a7-3b00-42ed-9f8e-d4cc49f13ba8
+            fsType: ext4
