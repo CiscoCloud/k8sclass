@@ -199,7 +199,9 @@ Now, how can we access this dashboard externally?  By default, these services ar
 
 Download a template file running: 
 
-```wget https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/03-Config/services/dashboard.yaml```
+```
+wget https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/03-Config/services/dashboard.yaml
+```
 
 Edit this file.  You will see that there are three places where you can add your worker node IP addresses:
 
