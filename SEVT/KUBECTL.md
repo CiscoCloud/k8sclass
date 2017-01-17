@@ -230,6 +230,8 @@ kubectl logs <pod name>
 ```
 where ```<pod name>``` is the name of the running busybox container. 
 
+Now since busybox doesn't have any logs, you won't see anything in the output, but if you were running something like nginx or another service you would see all the great logs from this. 
+
 ### 4.2. Exploring a running container
 
 We can also attach to a running pod and see what's happening inside of it.  Attach to your busy box container by running: 
