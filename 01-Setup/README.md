@@ -127,7 +127,7 @@ _Note:_ when the python-openstackclient is installed it installs the other OpenS
 #### Get Terraform 
 
 ```
-wget https://releases.hashicorp.com/terraform/0.7.9/terraform_0.7.9_linux_amd64.zip
+wget https://releases.hashicorp.com/terraform/0.8.4/terraform_0.8.4_linux_amd64.zip
 apt-get install -y unzip
 mv terraform /usr/local/bin/
 ```
