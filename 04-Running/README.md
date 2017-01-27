@@ -128,24 +128,54 @@ Examining this deployment file we notice a few things:
  * The kind is set to **deployment**
  * replicas is set to 1. This means that if the pod dies, an another will automatically be spun up by Kubernetes.
  * There are various labels set.
- * In the container section, it lists the source for the redis image as well as some requests for resources <b>(do we mention this in the presentation)?</b>
+ * In the container section, it lists the source for the redis image as well as some requests for resources
 
-cd into the 04-Running guestbook directory and run the following command to create this deployment in your cluster:
+Now run the following: 
+```bash
+cd ~/k8sclass/04-Running/guestbook
+```
+
+Now deploy the redis master deployment
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-deployment.yaml 
-deployment "redis-master" created
+kubectl create -f redis-master-deployment.yaml 
 ```
- We can confirm our redis-master was deployed successfully by running some additional commands:
+
+This deployment will create the redis-master pod that will be used by the guestbook app.  We can confirm the redis-master was deployed successfully by running some additional commands:
  
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployments
+kubectl get deployments
+```
+
+The output will look similar to the below
+
+```
 NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 redis-master   1         1         1            1           1m
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get replicasets
+```
+
+You can also see the replica sets
+
+```bash
+kubectl get replicasets
+```
+
+The output will look similar to the below
+
+```
 NAME                      DESIRED   CURRENT   READY     AGE
 redis-master-2696761081   1         1         1         1m
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
+```
+
+The individual pods of the deployment are viewable as well: 
+
+```bash
+kubectl get pods
+```
+
+The output will look similar to the below
+
+```bash
 NAME                            READY     STATUS    RESTARTS   AGE
 redis-master-2696761081-luk0y   1/1       Running   0          1m
 ```
@@ -155,7 +185,12 @@ Notice the naming of the deployment, replicaset, and pod. The pod name is the mo
 You can describe this pod to see additional details after it has been deployed.
 
 ```yaml
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl describe pods redis-master-2696761081-luk0y
+kubectl describe pods redis-master-2696761081-luk0y
+```
+
+The output shows something similar to the following: 
+
+```yaml
 Name:		redis-master-2696761081-luk0y
 Namespace:	default
 Node:		cc-kube-worker02/192.168.7.204
@@ -206,12 +241,13 @@ Events:
 
 If you would like to examine the logs for this container, you can do the following:
 
-```yaml
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
-NAME                            READY     STATUS    RESTARTS   AGE
-redis-master-2696761081-luk0y   1/1       Running   0          22m
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl logs redis-master-2696761081-luk0y 
-CONTENTS OF LOG
+```bash
+kubectl get pods
+```
+Make node of the pod name, then examine the logs: 
+
+```bash
+kubectl logs redis-master-<some stuff uniq to your redis master> 
 ```
 
 As it stands, redis-master has been deployed to a single pod which contains an IP. If there is an issue with this pod, the replication controller will ensure that it spins up again. However, it could now spin up in a different pod or even on a different host. This will result in a new IP address. Because we will have other components talking to this, we can create a service so that other components can reach this service via its service name. This ensures that we always have a way to talk to it.
@@ -244,11 +280,8 @@ Note this service file is pretty simple. Its kind is a service with a name of <b
 Create this service using the command below (similar to how we created the deployment)
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-master-service.yaml 
-service "redis-master" created
+kubectl create -f redis-master-service.yaml 
 ```
-
-
 
 #### Redis-slave Deployment 
 
@@ -267,9 +300,7 @@ Hopefully you noticed a few things:
 You are almost a pro at this, go ahead and create the redis-slave service as shown below:
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f redis-slave.yaml 
-service "redis-slave" created
-deployment "redis-slave" created
+kubectl create -f redis-slave.yaml 
 ```
 
 Notice how both a service and deployment were both created for us!
@@ -277,17 +308,23 @@ Notice how both a service and deployment were both created for us!
 Now lets see what pods are running.
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods
+kubectl get pods
+```
+
+You should see one master and two slaves running!
+
+```bash
 NAME                            READY     STATUS    RESTARTS   AGE
 redis-master-2696761081-luk0y   1/1       Running   0          53m
 redis-slave-798518109-0o6vc     1/1       Running   0          9m
 redis-slave-798518109-q0gjd     1/1       Running   0          9m
 ```
 
----
-SANITY CHECK: Why doesn't the redis-master show up when I run kubectl get svc -l exercise
-my labels don't seem to work :(
----
+You can also get services by the labels
+
+```
+kubectl get svc -l app=redis
+```
 
 #### Frontend Deployment 
 
@@ -296,13 +333,18 @@ For this guestbook example, we will use a simple PHP server that is configured t
 Configure the frontend as shown below:
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl create -f frontend.yaml 
-deployment "frontend" created
+kubectl create -f frontend.yaml 
 ```
 
 Confirm that all componenta are up by listing the deployments and replicasets:
+
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get deployment,rs
+kubectl get deployment,rs
+```
+
+The output will look similar to something like the below: 
+
+```bash
 NAME                  DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 deploy/frontend       3         3         3            3           51s
 deploy/redis-master   1         1         1            1           2d
@@ -311,13 +353,16 @@ NAME                         DESIRED   CURRENT   READY     AGE
 rs/frontend-88237173         3         3         3         51s
 rs/redis-master-2696761081   1         1         1         2d
 rs/redis-slave-798518109     2         2         2         2d
-
 ```
 
 If you have noticed, we have been labeling the various components. Examine the pods based on the tier label we have applied:
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl get pods -L tier
+kubectl get pods -L tier
+```
+The output is shown below
+
+```
 NAME                            READY     STATUS    RESTARTS   AGE       TIER
 frontend-88237173-e1e18         1/1       Running   0          1m        frontend
 frontend-88237173-hxphs         1/1       Running   0          1m        frontend
@@ -326,18 +371,27 @@ redis-master-2696761081-luk0y   1/1       Running   0          2d        backend
 redis-slave-798518109-0o6vc     1/1       Running   0          2d        backend
 redis-slave-798518109-q0gjd     1/1       Running   0          2d        backend
 ```
+
 These pods should reflect the diagram of the deployment at the begining of this lab.
 
 You may have also noticed that there is no service for the frontend component. A service will be needed in order to access our guetbook.
 
-You can expose the service via the command line by issuing the command ```kubectl expose deployment frontend --port=80 --type=NodePort```
+You can expose the service via the command line by issuing the command 
+
+```bash
+kubectl expose deployment frontend --port=80 --type=NodePort
+```
 
 Depending on the environment Kubernetes is running in, there are a number of ways to expose your applications. With some public cloud providers (e.g. Google), you can use a LoadBalancer instead of a NodePort. In this lab, we will expose the service via NodePort and then reconfigure our nginx web server to redirect traffic to this service. 
 
 You just exposed the frontend deployment as a service of type NodePort. To see what port Kubernetes assigned it you can run the command below or check the dashboard under services >> frontend.
 
 ```bash
-user04@lab01:~/k8sclass/04-Running/guestbook$ kubectl describe service frontend
+kubectl describe service frontend
+```
+
+The output is similar to the below:
+```
 Name:			frontend
 Namespace:		default
 Labels:			app=guestbook
