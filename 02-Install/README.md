@@ -165,6 +165,7 @@ This will create a ```/16``` unique network.  The instructor will assign this bu
 
 #### cluster_nets_prefix
 
+
 Change the second octet to reflect the value you put in the cidr field. 
 
 ```
