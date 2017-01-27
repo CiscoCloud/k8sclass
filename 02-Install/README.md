@@ -32,7 +32,7 @@ Most of this lab will involve modifying a Terraform script that will be used to 
 ```
 cd ~/k8sclass/02-Install/Terraform/
 ```
-(If this directory does not exist you didn't finish the [setup lab!](https://github.com/CiscoCloud/k8sclass/blob/master/00-Setup/README.md)  Go back and run the ```git clone``` command!)
+(If this directory does not exist you didn't finish the [setup lab!](https://github.com/CiscoCloud/k8sclass/blob/master/01-Setup/README.md)  Go back and run the ```git clone``` command!)
 
 In this directory you will find a few scripts, templates, and the  ```metacloud.tf``` file.  Open this file with your favorite text editor and we will change some values to deploy the cluster. 
 
@@ -71,7 +71,7 @@ From the list of networks make note of which one is used for your environment.  
 e.g. if my network was named "twenty", I would update the file to be:
 
 ```
-variable network { default = "lab-net" } 
+variable network { default = "twenty" } 
 ```
 
 Next, you need to figure out which pool the floating IPs will be assigned from.  In OpenStack we want to give our public facing nodes a floating IP address so we can connect remotely to that node via ssh.  This will be given to you by the instructor, but should be something like: ```PUBLIC - DO NOT MODIFY```.  Update the ```metacloud.tf``` file with this information.  e.g.:
@@ -164,7 +164,6 @@ This will create a ```/16``` unique network.  The instructor will assign this bu
 ```10.200+<group#>.0.0/16``` For example, if your group was 4, your network may be something like ```10.204.0.0/16```.
 
 #### cluster_nets_prefix
-
 
 Change the second octet to reflect the value you put in the cidr field. 
 

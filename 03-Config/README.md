@@ -73,7 +73,7 @@ user04@lab01:~/k8sclass/02-Install/Terraform$ pwd
 /home/user04/k8sclass/02-Install/Terraform
 
 cd certs/
-kubectl config set-cluster $CLUSTER --server='https://<CLUSTER_IP>' --certificate-authority=ca.pem --embed-certs=true
+kubectl config set-cluster $CLUSTER --server=https://$CLUSTER_IP --certificate-authority=ca.pem --embed-certs=true
 ```
 
 Remember the token we set in the Terraform file?  You can fish that (hint: ```grep token metacloud.tf | grep variable```) out and run the following command so we can speak with that cluster:
