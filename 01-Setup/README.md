@@ -71,6 +71,7 @@ openstack server list
 ```
 You should see a list of virtual machines running under this tenant with corresponding information.
 
+
 ### Caveats for Liberty OpenStack builds
 The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
 
@@ -91,6 +92,8 @@ You should now have everything you need to do the first lab and install your kub
 
 You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Install/README.md)
 
+
+<HR>
 
 # Appendix: Setting your own Environment
 

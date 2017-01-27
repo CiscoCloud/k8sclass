@@ -11,7 +11,7 @@ data:
   # The location of your cluster store. This is set to the
   # avdertise-client value below from the contiv-etcd service.
   # Change it to an external etcd/consul instance if required.
-  cluster_store: "etcd://10.104.0.18:6666"
+  cluster_store: "etcd://10.104.0.15:6666"
   # The CNI network configuration to install on each node.
   cni_config: |-
     {
@@ -21,7 +21,7 @@ data:
     }
   config: |-
     {
-       "K8S_API_SERVER": "https://10.104.0.18:6443",
+       "K8S_API_SERVER": "https://10.104.0.15:6443",
        "K8S_CA": "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
        "K8S_KEY": "",
        "K8S_CERT": "",
@@ -59,7 +59,7 @@ spec:
         - name: contiv-etcd
           image: gcr.io/google_containers/etcd:2.2.1
           command: ["/bin/sh","-c"]
-          args: ["/usr/local/bin/etcd --name=contiv --data-dir=/var/etcd/contiv-data --advertise-client-urls=http://10.104.0.18:6666 --listen-client-urls=http://0.0.0.0:6666 --listen-peer-urls=http://0.0.0.0:6667"]
+          args: ["/usr/local/bin/etcd --name=contiv --data-dir=/var/etcd/contiv-data --advertise-client-urls=http://10.104.0.15:6666 --listen-client-urls=http://0.0.0.0:6666 --listen-peer-urls=http://0.0.0.0:6667"]
           volumeMounts:
             - name: var-etcd
               mountPath: /var/etcd
