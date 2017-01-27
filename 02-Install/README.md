@@ -71,7 +71,7 @@ From the list of networks make note of which one is used for your environment.  
 e.g. if my network was named "twenty", I would update the file to be:
 
 ```
-variable network { default = "twenty" } 
+variable network { default = "lab-net" } 
 ```
 
 Next, you need to figure out which pool the floating IPs will be assigned from.  In OpenStack we want to give our public facing nodes a floating IP address so we can connect remotely to that node via ssh.  This will be given to you by the instructor, but should be something like: ```PUBLIC - DO NOT MODIFY```.  Update the ```metacloud.tf``` file with this information.  e.g.:
@@ -90,7 +90,7 @@ We'll need to know which image to use.  In this lab we are looking to use ```Ubu
 Update the ```metacloud.tf``` file to include this image.  e.g.:
 
 ```
-variable kube_image { default = "Ubuntu16.04"}
+variable kube_image { default = "ubuntu16.04"}
 ```
 
 You should also know what user will log into this image.  Your instructor should be able to tell you this and you can update the ```metacloud.tf``` file with something like: 
