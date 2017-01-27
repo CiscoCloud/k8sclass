@@ -24,10 +24,10 @@ variable worker_count { default = "3" }
 variable count_format { default = "%02d" } #server number format (01, 02, ...)
 
 ## OpenStack Variables
-variable "auth_url" {}
-variable "username" {}
-variable "password"  {}
-variable "tenant_id" {}
+#variable "auth_url" {}
+#variable "username" {}
+#variable "password"  {}
+#variable "tenant_id" {}
 
 # these variables are specific to your OpenStack cluster. 
 # should be Ubuntu 16.04 and reasonable size. 
@@ -408,10 +408,10 @@ resource "null_resource" "kube-master" {
   }
 
   # the openstack credentials to the kubelet
-  provisioner "file" {
-    content = "${data.template_file.metacloud.rendered}"
-    destination = "metacloud.cfg"
-  }
+#  provisioner "file" {
+#    content = "${data.template_file.metacloud.rendered}"
+#    destination = "metacloud.cfg"
+#  }
 
   provisioner "file" {
     source = "templates/authorization-policy.jsonl"
@@ -437,7 +437,7 @@ resource "null_resource" "kube-master" {
   # copy the config files to the right place. 
   provisioner "remote-exec" {
     inline = [
-      "sudo mv metacloud.cfg /etc/",
+#      "sudo mv metacloud.cfg /etc/",
       "sudo mv token.csv /var/lib/kubernetes/",
       "sudo mv authorization-policy.jsonl /var/lib/kubernetes/",
       "sudo mv kube-apiserver.service /etc/systemd/system/",
@@ -488,16 +488,16 @@ data "template_file" "kube-proxy" {
   }
 }
 
-data "template_file" "metacloud" {
-  template = "${file("templates/metacloud.cfg.tpl")}"
-  vars {
-    auth_url = "${var.auth_url}"
-    username = "${var.username}"
-    password = "${var.password}"
-    tenant_id = "${var.tenant_id}"
-    region = "RegionOne"
-  }
-}
+#data "template_file" "metacloud" {
+#  template = "${file("templates/metacloud.cfg.tpl")}"
+#  vars {
+#    auth_url = "${var.auth_url}"
+#    username = "${var.username}"
+#    password = "${var.password}"
+#    tenant_id = "${var.tenant_id}"
+#    region = "RegionOne"
+#  }
+#}
 
 # configure cbr0 individually on each host. 
 data "template_file" "cbr0" {
@@ -573,10 +573,10 @@ resource "null_resource" "kube-workers" {
   }
 
   # the openstack credentials to the kubelet
-  provisioner "file" {
-    content = "${data.template_file.metacloud.rendered}"
-    destination = "metacloud.cfg"
-  }
+#  provisioner "file" {
+#    content = "${data.template_file.metacloud.rendered}"
+#    destination = "metacloud.cfg"
+#  }
 
   # get the kubeconfig
   provisioner "file" {
@@ -611,7 +611,7 @@ resource "null_resource" "kube-workers" {
       "sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni", 
       "tar -xvf docker-1.12.1.tgz",
       "sudo cp docker/docker* /usr/bin/",
-      "sudo mv metacloud.cfg /etc/metacloud.cfg",
+#      "sudo mv metacloud.cfg /etc/metacloud.cfg",
       # have to remove the local bridge entry for this host from cbr0
       "sed -e 's/^up.*${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}.${var.cluster_nets_suffix}.*$//g' cbr0.cfg > cbr0.cfg0",
       "sed -e 's/DOCKERBRIDGE/${var.cluster_nets_prefix}.${element(openstack_compute_instance_v2.kube-worker.*.metadata.worker_number, count.index)}/g' cbr0.cfg0 > cbr0.cfg1",
