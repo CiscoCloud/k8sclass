@@ -134,7 +134,7 @@ These are the OpenStack commands that need to be run to enable the routes for yo
 
 Once they run these commands they will let you know and you can move on!  Maybe, now is a good time to go get some coffee while you wait.
 
-### Troubleshooting ```generate-nuetron-routes.py```
+#### Troubleshooting ```generate-nuetron-routes.py```
 Did the script not work?  So sorry to hear that!  I guess you're just never going to finish this lab.  Just kidding!  There may be a bug!  Let us know and we can help you!
 
 ### Kubernetes DNS
