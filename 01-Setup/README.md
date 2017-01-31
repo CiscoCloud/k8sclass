@@ -18,7 +18,7 @@ First we need to setup access to the cloud environment. Typically this could be 
 
 ### Setup OpenStack Environment Variables
 
-You can log into the OpenStack cluster at [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) with username ```lab01``` and password: ```PASSWORD```.
+You can log into the OpenStack cluster at [https://dashboard-trial5.client.metacloud.net/auth/login/](https://dashboard-trial5.client.metacloud.net/auth/login/) with username ```lab01``` and password: ```<PASSWORD>```. (The password is in the Spark Room)
 
 Set the following in your ```~/.profile``` file. This information will be read in by the OpenStack CLI client so that it can properly connect to the OpenStack cloud.
 
@@ -158,3 +158,4 @@ sudo mv kubectl /usr/local/bin
 ```
 
 When you have these components you are now ready to setup your environment as specified in the beginning of this lab.
+>
