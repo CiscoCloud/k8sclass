@@ -68,10 +68,10 @@ You'll need to know which network your cluster will be deployed on.  Ask the ins
 
 From the list of networks make note of which one is used for your environment.  It will be the same network that the lab VM is on. It will also be the same instance that you put a VM on in lab 0. This should then be updated in the ```metacloud.tf``` file. 
 
-e.g. if my network was named "twenty", I would update the file to be:
+e.g. if my network was named "supernetwork", I would update the file to be:
 
 ```
-variable network { default = "twenty" } 
+variable network { default = "supernetwork" } 
 ```
 
 Next, you need to figure out which pool the floating IPs will be assigned from.  In OpenStack we want to give our public facing nodes a floating IP address so we can connect remotely to that node via ssh.  This will be given to you by the instructor, but should be something like: ```PUBLIC - DO NOT MODIFY```.  Update the ```metacloud.tf``` file with this information.  e.g.:
