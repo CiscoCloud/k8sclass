@@ -12,7 +12,7 @@ Remember in the last lab that you named your load balancer?  What was the name? 
 Once you know this, run the following commands substituting <lb> in with your load balancer name (like ```cc-lb01```).
 
 ```bash
-export LB=cc-nginx01
+export LB=<your loadbalancer>
 export CLUSTER_IP=$(openstack server list | grep -i $LB \
 	 | awk -F"|" '{print $5}' | awk -F, '{print $2}' | xargs)
 echo $CLUSTER_IP
