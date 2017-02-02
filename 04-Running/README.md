@@ -433,6 +433,8 @@ Open a browser to access your guestbook at the URL: http://<LB_IP>:8888
 
 <img src="images/guestbookRunning.png">
 
+Feel free to add some comments to your GuestBook. When ready you can move on to the [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/05-Basics/README.md) 
+
 
 
 
