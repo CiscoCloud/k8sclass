@@ -72,14 +72,6 @@ openstack server list
 You should see a list of virtual machines running under this tenant with corresponding information.
 
 
-### Caveats for Liberty OpenStack builds
-The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
-
-```
-export OS_AUTH_URL=https://<given url>:5000/v3
-export OS_DOMAIN_NAME="<domain name>"
-```
-
 ### Get Source Files
 
 To obtain all the necessary files for working on these labs, you will clone the git repo. From your home directory run the following command.
@@ -90,12 +82,12 @@ git clone https://github.com/CiscoCloud/k8sclass.git
 
 You should now have everything you need to do the first lab and install your kubernetes cluster!
 
-You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Install/README.md)
+### You can now move on to the [Installation Lab](https://github.com/CiscoCloud/k8sclass/blob/master/02-Install/README.md)
 
 
 <HR>
 
-# Appendix: Setting your own Environment
+# Appendix: Setting your own Environment (Don't do this)
 
 If you decide to do this on your own laptop you will need the following installed: 
 
@@ -158,4 +150,12 @@ sudo mv kubectl /usr/local/bin
 ```
 
 When you have these components you are now ready to setup your environment as specified in the beginning of this lab.
->
+
+
+### Caveats for Liberty OpenStack builds
+The following exceptions are noted for using Liberty with Terraform.  The file that is downloaded from the Horizon dashboard will need a few other environment variables set:
+
+```
+export OS_AUTH_URL=https://<given url>:5000/v3
+export OS_DOMAIN_NAME="<domain name>"
+```
