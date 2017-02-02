@@ -262,6 +262,8 @@ If all goes well you should see the dashboard:
 ![kubernetes file](images/kubedash.png)
 
 
+You can now proceed to the [next lab](https://github.com/CiscoCloud/k8sclass/blob/master/04-Running/README.md) to deploy an example application!
+
 ## Optional Stuff (feel free to ignore)
 
 (Ignore unless you want to see other ways to communicate with the API server)
