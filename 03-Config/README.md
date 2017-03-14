@@ -156,7 +156,7 @@ Run the command:
 
 ```kubectl create -f https://raw.githubusercontent.com/CiscoCloud/k8sclass/master/03-Config/deployments/kubedns.yaml```
 
-Kubernetes reads the file and deploys containers based on what it says to do.  You can [look at the file here](https://github.com/CiscoCloud/k8sclass/blob/master/02-Config/deployments/kubedns.yaml).  Notice that the ```kind``` is ```Deployment```.  There are three container images specified that will be deployed:  ```kubedns```, ```dnsmasq```, and ```healthz```.  These containers will all be deployed in a single pod.  Line 25 also shows that two of these pods will be created.  
+Kubernetes reads the file and deploys containers based on what it says to do.  You can [look at the file here](https://github.com/CiscoCloud/k8sclass/blob/master/03-Config/deployments/kubedns.yaml).  Notice that the ```kind``` is ```Deployment```.  There are three container images specified that will be deployed:  ```kubedns```, ```dnsmasq```, and ```healthz```.  These containers will all be deployed in a single pod.  Line 25 also shows that two of these pods will be created.  
 
 Check that services are now up.
 
